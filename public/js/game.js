@@ -46,48 +46,59 @@ resources.onReady(init);
 
 // Game state
 var player = {
-    pos: [0, 0],
+    pos: [canvas.width/2, 200],
+    velocity:[0,0],
     sprite: new Sprite('img/character.png', [0, 0], [40, 40])
 };
 
+var platforms = [];
+
+var plat1 = {
+    rect:[canvas.width * .25,canvas.height * .75,canvas.width * .25,canvas.height * .25]
+};
+
+platforms[0] = plat1;
+
 var gameTime = 0;
 
-
+var gravity = .1;
 
 
 // Speed in pixels per second
 var playerSpeed = 200;
+var playerJumpSpeed = 200;
 
 // Update game objects
 function update(dt) {
     gameTime += dt;
 
     handleInput(dt);
+    checkCollisions(dt);
     updateEntities(dt);
 
-    checkCollisions();
 
 };
 
 function handleInput(dt) {
-	var x = player.pos[0] + player.sprite.size[0] / 2;
+    var x = player.pos[0] + player.sprite.size[0] / 2;
     var y = player.pos[1] + player.sprite.size[1] / 2;
-		
+	
+    /*
     if(input.isDown('DOWN') || input.isDown('s')) {
         player.pos[1] += playerSpeed * dt;
     }
+    */
 
     if(input.isDown('UP') || input.isDown('w')) {
-        player.pos[1] -= playerSpeed * dt;
+        player.velocity[1] = -playerJumpSpeed * dt;
     }
 
     if(input.isDown('LEFT') || input.isDown('a')) {
-        player.pos[0] -= playerSpeed * dt;
-    }
-
-    if(input.isDown('RIGHT') || input.isDown('d')) {
-        player.pos[0] += playerSpeed * dt;
-    }
+        player.velocity[0] = -playerSpeed * dt;
+    }else if(input.isDown('RIGHT') || input.isDown('d')) {
+        player.velocity[0] = playerSpeed * dt;
+    } else
+        player.velocity[0] = 0;
 
         
 }
@@ -95,16 +106,85 @@ function handleInput(dt) {
 function updateEntities(dt) {
     // Update the player sprite animation
     player.sprite.update(dt);
-
+    
+    
+    
+    player.pos[0] += player.velocity[0];
+    player.pos[1] += player.velocity[1];
+    
     
 
 }
 
 // Collisions
-function checkCollisions() {
+function checkCollisions(dt) {
     checkPlayerBounds();
+    /*
+    var playPredictRect = [player.pos[0] + player.velocity[0],player.pos[1] + player.velocity[1]
+        ,player.sprite.size[0],player.sprite.size[1]];
+    */
+   var predictRect = [];
+       
+    var playRect = [player.pos[0],player.pos[1]
+        ,player.sprite.size[0],player.sprite.size[1]];
+    
+    
+    
+    //Player touch platform
+    var standing = false;
+    var xSign = Math.sign(player.velocity[0]);
+    var ySign = Math.sign(player.velocity[1]);
+    for(i=0;i<platforms.length;i++){
+        var platRect = platforms[i].rect;
+        predictRect = playRect;
+        predictRect[0] += player.velocity[0];
+        if (checkRectCollision(predictRect,platRect)){
+            predictRect = playRect;
+            predictRect[0] += xSign;
+            player.velocity[0] = 0;
+            while (!checkRectCollision(predictRect,platRect)){
+                player.pos[0] += xSign * dt;
+                predictRect[0] += xSign * dt;
+            }
+            //player.pos[0]--;
+            
+        }
+        
+        predictRect = playRect;
+        predictRect[1] += player.velocity[1];
+        if (checkRectCollision(predictRect,platRect)){
+            predictRect = playRect;
+            predictRect[1] += ySign ;
+            player.velocity[1] = 0;
+            while (!checkRectCollision(predictRect,platRect)){
+                player.pos[1] += ySign * dt;
+                predictRect[1] += ySign * dt;
+            }
+            //player.pos[1]--;
+            
+        }
+        predictRect = playRect;
+        predictRect[1] += 1;
+        if (checkRectCollision(predictRect,platRect)){
+            standing = true;
+        }
+    }
+    
+    
+    if (!standing )
+        player.velocity[1] += gravity;
     
    
+}
+
+function checkRectCollision(rect1, rect2){
+    var hit = true;
+    if (rect1[0] + rect1[2] < rect2[0] 
+    || rect1[0] > rect2[0] + rect2[2]
+    || rect1[1] + rect1[3] < rect2[1]
+    || rect1[1] > rect2[1] + rect2[3])
+        hit = false;
+    return hit;
 }
 
 function checkPlayerBounds() {
@@ -121,6 +201,8 @@ function checkPlayerBounds() {
     }
     else if(player.pos[1] > canvas.height - player.sprite.size[1]) {
         player.pos[1] = canvas.height - player.sprite.size[1];
+        if (player.velocity[1] > 0)
+            player.velocity[1] = 0;
     }
 }
 var background = new Image();
@@ -129,9 +211,16 @@ background.src = 'img/background.svg';
 function render() {
     //ctx.fillColor = "000000";
     //ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(background, 0, 0)
+    ctx.drawImage(background, 0, 0);
  
     renderEntity(player);
+    
+    //Platforms
+    for(i=0;i<platforms.length;i++){
+        var plat = platforms[i];
+        ctx.fillStyle = "black";
+        ctx.fillRect(plat.rect[0],plat.rect[1],plat.rect[2],plat.rect[3]);
+    }
 };
 
 function renderEntity(entity) {
