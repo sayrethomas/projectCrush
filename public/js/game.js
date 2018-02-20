@@ -48,7 +48,8 @@ resources.onReady(init);
 var player = {
     pos: [canvas.width/2, 200],
     velocity:[0,0],
-    sprite: new Sprite('img/character.png', [0, 0], [40, 40])
+    sprite: new Sprite('img/character.png', [0, 0], [40, 40]),
+    jump: false
 };
 
 var platforms = [];
@@ -57,7 +58,14 @@ var plat1 = {
     rect:[canvas.width * .25,canvas.height * .75,canvas.width * .25,canvas.height * .25]
 };
 
-platforms[0] = plat1;
+var plat2 = {
+    rect:[canvas.width * .8,canvas.height * .75,canvas.width * .2,canvas.height * .25]
+};
+
+
+platforms[1] = plat1;
+platforms[0] = plat2;
+
 
 var gameTime = 0;
 
@@ -83,14 +91,19 @@ function handleInput(dt) {
     var x = player.pos[0] + player.sprite.size[0] / 2;
     var y = player.pos[1] + player.sprite.size[1] / 2;
 	
-    /*
+    
     if(input.isDown('DOWN') || input.isDown('s')) {
-        player.pos[1] += playerSpeed * dt;
-    }
-    */
-
-    if(input.isDown('UP') || input.isDown('w')) {
-        player.velocity[1] = -playerJumpSpeed * dt;
+        player.velocity[1] = playerSpeed * dt;
+    }else if(input.isDown('UP') || input.isDown('w')) {
+        //player.velocity[1] = -playerJumpSpeed * dt;
+        
+         if (!player.jump){
+            player.velocity[1] = -playerJumpSpeed * dt;
+            player.jump = true;
+        }
+        
+    } else{
+        player.jump = false;
     }
 
     if(input.isDown('LEFT') || input.isDown('a')) {
@@ -123,42 +136,47 @@ function checkCollisions(dt) {
     var playPredictRect = [player.pos[0] + player.velocity[0],player.pos[1] + player.velocity[1]
         ,player.sprite.size[0],player.sprite.size[1]];
     */
-   var predictRect = [];
+    var predictRect = [];
        
-    var playRect = [player.pos[0],player.pos[1]
-        ,player.sprite.size[0],player.sprite.size[1]];
+    var playRect = [];
     
     
     
     //Player touch platform
     var standing = false;
-    var xSign = Math.sign(player.velocity[0]);
-    var ySign = Math.sign(player.velocity[1]);
+    
     for(i=0;i<platforms.length;i++){
+        playRect = [player.pos[0],player.pos[1]
+        ,player.sprite.size[0],player.sprite.size[1]];
+        var xSign = Math.sign(player.velocity[0]) * .5 * dt;
+        var ySign = Math.sign(player.velocity[1]) * .5 * dt;
         var platRect = platforms[i].rect;
+        
         predictRect = playRect;
         predictRect[0] += player.velocity[0];
+        
         if (checkRectCollision(predictRect,platRect)){
             predictRect = playRect;
             predictRect[0] += xSign;
             player.velocity[0] = 0;
             while (!checkRectCollision(predictRect,platRect)){
-                player.pos[0] += xSign * dt;
-                predictRect[0] += xSign * dt;
+                player.pos[0] += xSign;
+                predictRect[0] += xSign;
             }
-            //player.pos[0]--;
             
         }
         
+        playRect = [player.pos[0],player.pos[1]
+        ,player.sprite.size[0],player.sprite.size[1]];
         predictRect = playRect;
         predictRect[1] += player.velocity[1];
         if (checkRectCollision(predictRect,platRect)){
             predictRect = playRect;
-            predictRect[1] += ySign ;
+            predictRect[1] += ySign;
             player.velocity[1] = 0;
             while (!checkRectCollision(predictRect,platRect)){
-                player.pos[1] += ySign * dt;
-                predictRect[1] += ySign * dt;
+                player.pos[1] += ySign;
+                predictRect[1] += ySign;
             }
             //player.pos[1]--;
             
