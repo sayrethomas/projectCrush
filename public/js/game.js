@@ -40,41 +40,62 @@ function init() {
 }
 
 resources.load([
-    'img/character.png'
+    'img/charHair2.png',
+    'img/platform.png',
+    'img/platformFloat.png',
+    'img/platformFloat2.png'
 ]);
 resources.onReady(init);
 
 // Game state
 var player = {
-    pos: [canvas.width/2, 200],
+    pos: [canvas.width/2 -40, 200],
     velocity:[0,0],
-    sprite: new Sprite('img/character.png', [0, 0], [40, 40]),
-    jump: false
+    sprite: new Sprite('img/charHair2.png', [0, 0], [40, 40], 7, [0, 1]),
+    jump: false,
+    hasJumps: 3
 };
 
 var platforms = [];
 
 var plat1 = {
-    rect:[canvas.width * .25,canvas.height * .75,canvas.width * .25,canvas.height * .25]
+    pos: [canvas.width/2-200, canvas.height-151],
+    sprite: new Sprite('img/platform.png', [0, 0], [400, 151]),
+    rect:[canvas.width/2-200,canvas.height-150,400,150]
 };
 
 var plat2 = {
-    rect:[canvas.width * .8,canvas.height * .75,canvas.width * .2,canvas.height * .25]
+    pos: [220, 240],
+    sprite: new Sprite('img/platformFloat.png', [0, 0], [80, 20], 5, [0,1,2,3,4,5]),
+    rect:[220,240,80,1]
+};
+
+var plat3 = {
+    pos: [500, 240],
+    sprite: new Sprite('img/platformFloat.png', [0, 0], [80, 20], 5, [0,1,2,3,4,5]),
+    rect:[500,240,80,1]
+};
+
+var plat4 = {
+    pos: [340, 170],
+    sprite: new Sprite('img/platformFloat2.png', [0, 0], [120, 20], 5, [0,1,2,3,4,5]),
+    rect:[340,170,120,1]
 };
 
 
-platforms[1] = plat1;
-platforms[0] = plat2;
-
+platforms[0] = plat1;
+platforms[1] = plat2;
+platforms[2] = plat3;
+platforms[3] = plat4;
 
 var gameTime = 0;
 
-var gravity = .1;
-
+var gravity = .1; 
+var dir = true;
 
 // Speed in pixels per second
 var playerSpeed = 200;
-var playerJumpSpeed = 200;
+var playerJumpSpeed = 220;
 
 // Update game objects
 function update(dt) {
@@ -88,31 +109,38 @@ function update(dt) {
 };
 
 function handleInput(dt) {
-    var x = player.pos[0] + player.sprite.size[0] / 2;
-    var y = player.pos[1] + player.sprite.size[1] / 2;
-	
     
-    if(input.isDown('DOWN') || input.isDown('s')) {
-        player.velocity[1] = playerSpeed * dt;
-    }else if(input.isDown('UP') || input.isDown('w')) {
-        //player.velocity[1] = -playerJumpSpeed * dt;
-        
-         if (!player.jump){
-            player.velocity[1] = -playerJumpSpeed * dt;
-            player.jump = true;
-        }
-        
-    } else{
-        player.jump = false;
-    }
-
     if(input.isDown('LEFT') || input.isDown('a')) {
         player.velocity[0] = -playerSpeed * dt;
+        player.sprite.frames = [4,5];
+        dir = true;
     }else if(input.isDown('RIGHT') || input.isDown('d')) {
         player.velocity[0] = playerSpeed * dt;
-    } else
+        player.sprite.frames = [6,7];
+        dir = false;
+    } else{
         player.velocity[0] = 0;
-
+        if(dir){player.sprite.frames = [0,1];}
+        else{player.sprite.frames = [2,3];}
+    }
+    if(input.isDown('DOWN') || input.isDown('s')) {
+            player.velocity[1] = playerSpeed * dt;
+           // player.sprite.frames = [0, 4];
+        }else if(input.isDown('UP') || input.isDown('w')) {
+            //player.velocity[1] = -playerJumpSpeed * dt;
+            //player.sprite.frames = [0, 2];          
+        }
+    if(input.isDown('SPACE')){
+       if (!player.jump && player.hasJumps > 0){
+            player.velocity[1] = -playerJumpSpeed * dt;
+            player.hasJumps--;
+            player.jump = true;  
+        }
+        // player.sprite.frames = [2];
+    }
+    else{
+        player.jump = false;
+    }  
         
 }
 
@@ -120,7 +148,9 @@ function updateEntities(dt) {
     // Update the player sprite animation
     player.sprite.update(dt);
     
-    
+    plat2.sprite.update(dt);
+    plat3.sprite.update(dt);
+    plat4.sprite.update(dt);
     
     player.pos[0] += player.velocity[0];
     player.pos[1] += player.velocity[1];
@@ -185,6 +215,7 @@ function checkCollisions(dt) {
         predictRect[1] += 1;
         if (checkRectCollision(predictRect,platRect)){
             standing = true;
+            player.hasJumps = 3;
         }
     }
     
@@ -230,15 +261,19 @@ function render() {
     //ctx.fillColor = "000000";
     //ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(background, 0, 0);
- 
+    
+    renderEntity(plat1);
+    renderEntity(plat2);
+    renderEntity(plat3);
+    renderEntity(plat4);
     renderEntity(player);
     
     //Platforms
-    for(i=0;i<platforms.length;i++){
-        var plat = platforms[i];
-        ctx.fillStyle = "black";
-        ctx.fillRect(plat.rect[0],plat.rect[1],plat.rect[2],plat.rect[3]);
-    }
+//    for(i=0;i<platforms.length;i++){
+//        var plat = platforms[i];
+//        ctx.fillStyle = "black";
+//        ctx.fillRect(plat.rect[0],plat.rect[1],plat.rect[2],plat.rect[3]);
+//    }
 };
 
 function renderEntity(entity) {
