@@ -48,39 +48,55 @@ resources.load([
 resources.onReady(init);
 
 // Game state
-var player = {
-    pos: [canvas.width/2 -40, 200],
-    velocity:[0,0],
-    sprite: new Sprite('img/charHair2.png', [0, 0], [40, 40], 7, [0, 1]),
-    jump: false,
-    hasJumps: 3
-};
+var player = new GamePiece("player",
+    new Sprite('img/charHair2.png', [0, 0], [40, 40], 7, [0, 1]),
+    [],
+    [canvas.width/2 -40, 200]
+);
+
+player.jump = false;
+player.hasJumps = 3;
 
 var platforms = [];
 
-var plat1 = {
-    pos: [canvas.width/2-200, canvas.height-151],
-    sprite: new Sprite('img/platform.png', [0, 0], [400, 151]),
-    rect:[canvas.width/2-200,canvas.height-150,400,150]
-};
+var plat1 = new GamePiece("platform",
+    new Sprite('img/platform.png', [0, 0], [400, 151]),
+    [canvas.width/2-200,canvas.height-150,400,150],
+    [canvas.width/2-200, canvas.height-151]
+);
 
-var plat2 = {
+var plat2 = /*{
     pos: [220, 240],
     sprite: new Sprite('img/platformFloat.png', [0, 0], [80, 20], 5, [0,1,2,3,4,5]),
     rect:[220,240,80,1]
-};
+};*/
+new GamePiece("platform",
+    new Sprite('img/platformFloat.png', [0, 0], [80, 20], 5, [0,1,2,3,4,5]),
+    [220,240,80,1],
+    [220, 240],
+);
 
-var plat3 = {
+var plat3 = /*{
     pos: [500, 240],
     sprite: new Sprite('img/platformFloat.png', [0, 0], [80, 20], 5, [0,1,2,3,4,5]),
     rect:[500,240,80,1]
-};
+};*/
+new GamePiece("platform",
+    new Sprite('img/platformFloat.png', [0, 0], [80, 20], 5, [0,1,2,3,4,5]),
+    [500,240,80,1],
+    [500,240]
+);
 
-var plat4 = {
+var plat4 = /*{
     pos: [340, 170],
     sprite: new Sprite('img/platformFloat2.png', [0, 0], [120, 20], 5, [0,1,2,3,4,5]),
     rect:[340,170,120,1]
-};
+};*/
+new GamePiece("platform",
+    new Sprite('img/platformFloat2.png', [0, 0], [120, 20], 5, [0,1,2,3,4,5]),
+    [340,170,120,1],
+    [340, 170]
+);
 
 
 platforms[0] = plat1;
