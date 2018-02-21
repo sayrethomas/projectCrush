@@ -92,7 +92,8 @@ var gameTime = 0;
 
 var gravity = .1; 
 var dir = true;
-
+//Player touch platform
+var standing = true;
 // Speed in pixels per second
 var playerSpeed = 200;
 var playerJumpSpeed = 220;
@@ -112,11 +113,13 @@ function handleInput(dt) {
     
     if(input.isDown('LEFT') || input.isDown('a')) {
         player.velocity[0] = -playerSpeed * dt;
-        player.sprite.frames = [4,5];
+        if(standing){player.sprite.frames = [4,5];}
+        else{player.sprite.frames = [4,9];}
         dir = true;
     }else if(input.isDown('RIGHT') || input.isDown('d')) {
         player.velocity[0] = playerSpeed * dt;
-        player.sprite.frames = [6,7];
+        if(standing){player.sprite.frames = [6,7];}
+        else{player.sprite.frames = [6, 8];}
         dir = false;
     } else{
         player.velocity[0] = 0;
@@ -136,7 +139,8 @@ function handleInput(dt) {
             player.hasJumps--;
             player.jump = true;  
         }
-        // player.sprite.frames = [2];
+        if(dir){player.sprite.frames = [9];}
+        else{player.sprite.frames =  [8];}
     }
     else{
         player.jump = false;
@@ -169,11 +173,10 @@ function checkCollisions(dt) {
     var predictRect = [];
        
     var playRect = [];
+    standing = false;
     
     
     
-    //Player touch platform
-    var standing = false;
     
     for(i=0;i<platforms.length;i++){
         playRect = [player.pos[0],player.pos[1]
