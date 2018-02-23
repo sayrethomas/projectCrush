@@ -70,19 +70,19 @@ var plat1 = new GamePiece("platform",
 
 var plat2 = new GamePiece("platform",
     new Sprite('img/platformFloat.png', [0, 0], [80, 20], 5, [0,1,2,3,4,5]),
-    [220,240,80,1],
+    [230,240,60,1],
     [220, 240],
 );
 
 var plat3 = new GamePiece("platform",
     new Sprite('img/platformFloat.png', [0, 0], [80, 20], 5, [0,1,2,3,4,5]),
-    [500,240,80,1],
+    [510,240,60,1],
     [500,240]
 );
 
 var plat4 = new GamePiece("platform",
     new Sprite('img/platformFloat2.png', [0, 0], [120, 20], 5, [0,1,2,3,4,5]),
-    [340,170,120,1],
+    [350,170,100,1],
     [340, 170]
 );
 
