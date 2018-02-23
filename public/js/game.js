@@ -59,6 +59,7 @@ var player = new GamePiece("player",
 
 player.jump = false;
 player.hasJumps = 3;
+player.standing = false;
 player.onPassThorugh = false;
 player.dropThrough = false;
 player.speed = 200;
@@ -75,34 +76,20 @@ var plat1 = new GamePiece("platform",
     [canvas.width/2-200, canvas.height-151]
 );
 
-<<<<<<< HEAD
-var plat2 = 
-new GamePiece("platform",
-=======
 var plat2 = new GamePiece("platform",
->>>>>>> abc9b0ec6e7010f2a303134f8be214bbf546671a
     new Sprite('img/platformFloat.png', [0, 0], [80, 20], 5, [0,1,2,3,4,5]),
     [230,240,60,1],
     [220, 240],
 );
 
-<<<<<<< HEAD
-var plat3 = 
-new GamePiece("platform",
-=======
+
 var plat3 = new GamePiece("platform",
->>>>>>> abc9b0ec6e7010f2a303134f8be214bbf546671a
     new Sprite('img/platformFloat.png', [0, 0], [80, 20], 5, [0,1,2,3,4,5]),
     [510,240,60,1],
     [500,240]
 );
 
-<<<<<<< HEAD
-var plat4 = 
-new GamePiece("platform",
-=======
 var plat4 = new GamePiece("platform",
->>>>>>> abc9b0ec6e7010f2a303134f8be214bbf546671a
     new Sprite('img/platformFloat2.png', [0, 0], [120, 20], 5, [0,1,2,3,4,5]),
     [350,170,100,1],
     [340, 170]
@@ -118,15 +105,12 @@ var gameTime = 0;
 var isGameOver;
 var gravity = .1; 
 var dir = true;
-<<<<<<< HEAD
 
-=======
 //Player touch platform
-var standing = true;
+//var standing = true;
 // Speed in pixels per second
 var playerSpeed = 200;
 var playerJumpSpeed = 220;
->>>>>>> abc9b0ec6e7010f2a303134f8be214bbf546671a
 
 // Update game objects
 function update(dt) {
@@ -142,25 +126,16 @@ function update(dt) {
 function handleInput(dt) {
     
     if(input.isDown('LEFT') || input.isDown('a')) {
-<<<<<<< HEAD
         player.velocity[0] = -player.speed * dt;
-        player.sprite.frames = [4,5];
-        dir = true;
-    }else if(input.isDown('RIGHT') || input.isDown('d')) {
-        player.velocity[0] = player.speed * dt;
-        player.sprite.frames = [6,7];
-=======
-        player.velocity[0] = -playerSpeed * dt;
-        if(standing){player.sprite.frames = [4,5];}
+        if(player.standing){player.sprite.frames = [4,5];}
         else{player.sprite.frames = [9];}
         dir = true;
     }else if(input.isDown('RIGHT') || input.isDown('d')) {
-        player.velocity[0] = playerSpeed * dt;
-        if(standing){player.sprite.frames = [6,7];}
+        player.velocity[0] = player.speed * dt;
+        if(player.standing){player.sprite.frames = [6,7];}
         else{player.sprite.frames = [8];}
->>>>>>> abc9b0ec6e7010f2a303134f8be214bbf546671a
         dir = false;
-    } else{
+    }else{
         player.velocity[0] = 0;
         if(dir){player.sprite.frames = [0,1];}
         else{player.sprite.frames = [2,3];}
@@ -177,11 +152,8 @@ function handleInput(dt) {
             player.hasJumps--;
             player.jump = true;  
         }
-<<<<<<< HEAD
-=======
         if(dir){player.sprite.frames = [9];}
         else{player.sprite.frames =  [8];}
->>>>>>> abc9b0ec6e7010f2a303134f8be214bbf546671a
     }
     else{
         player.jump = false;
@@ -207,10 +179,10 @@ function updateEntities(dt) {
 // Collisions
 function checkCollisions(dt) {
     //Player touch platform
-    var standing = false;
+    player.standing = false;
     checkPlayerBounds();
-    standing = checkPlatformCollisions(dt);
-    checkPassthroughPlatformCollisions(dt,standing);
+    player.standing = checkPlatformCollisions(dt);
+    checkPassthroughPlatformCollisions(dt,player.standing);
     
 }
 
@@ -218,14 +190,8 @@ function checkPlatformCollisions(dt){
     var predictRect = [];
        
     var playRect = [];
-    standing = false;
+    player.standing = false;
     
-<<<<<<< HEAD
-    var standing = false;
-=======
-    
-    
->>>>>>> abc9b0ec6e7010f2a303134f8be214bbf546671a
     
     for(i=0;i<platforms.length;i++){
         playRect = [player.pos[0],player.pos[1]
@@ -264,16 +230,16 @@ function checkPlatformCollisions(dt){
         predictRect = playRect;
         predictRect[1] += 1;
         if (checkRectCollision(predictRect,platRect)){
-            standing = true;
+            player.standing = true;
             player.hasJumps = 3;
         }
     }
     
     
-    if (!standing )
+    if (!player.standing )
         player.velocity[1] += gravity;
     
-    return standing;
+    return player.standing;
     
 }
 
@@ -305,11 +271,11 @@ function checkPassthroughPlatformCollisions(dt,standing){
                     }
                 }
 
-                if (!standing){
+                if (!player.standing){
                     predictRect = playRect;
                     predictRect[1] += 1;
                     if (checkRectCollision(predictRect,platRect)){
-                        standing = true;
+                        player.standing = true;
                         player.hasJumps = 3;
                         if (player.dropThrough){
                             player.pos[1]++;
@@ -319,10 +285,10 @@ function checkPassthroughPlatformCollisions(dt,standing){
             }
         }
         
-        if (!standing )
+        if (!player.standing )
             player.velocity[1] += gravity;
     }
-    return standing;
+    return player.standing;
 }
 function checkRectCollision(rect1, rect2){
     var hit = true;
