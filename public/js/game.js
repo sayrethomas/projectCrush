@@ -34,7 +34,10 @@ function main() {
 };
 
 function init() {
-
+    document.getElementById('play-again').addEventListener('click', function() {
+        reset();
+    });
+    reset();
     lastTime = Date.now();
     main();
 }
@@ -65,34 +68,19 @@ var plat1 = new GamePiece("platform",
     [canvas.width/2-200, canvas.height-151]
 );
 
-var plat2 = /*{
-    pos: [220, 240],
-    sprite: new Sprite('img/platformFloat.png', [0, 0], [80, 20], 5, [0,1,2,3,4,5]),
-    rect:[220,240,80,1]
-};*/
-new GamePiece("platform",
+var plat2 = new GamePiece("platform",
     new Sprite('img/platformFloat.png', [0, 0], [80, 20], 5, [0,1,2,3,4,5]),
     [220,240,80,1],
     [220, 240],
 );
 
-var plat3 = /*{
-    pos: [500, 240],
-    sprite: new Sprite('img/platformFloat.png', [0, 0], [80, 20], 5, [0,1,2,3,4,5]),
-    rect:[500,240,80,1]
-};*/
-new GamePiece("platform",
+var plat3 = new GamePiece("platform",
     new Sprite('img/platformFloat.png', [0, 0], [80, 20], 5, [0,1,2,3,4,5]),
     [500,240,80,1],
     [500,240]
 );
 
-var plat4 = /*{
-    pos: [340, 170],
-    sprite: new Sprite('img/platformFloat2.png', [0, 0], [120, 20], 5, [0,1,2,3,4,5]),
-    rect:[340,170,120,1]
-};*/
-new GamePiece("platform",
+var plat4 = new GamePiece("platform",
     new Sprite('img/platformFloat2.png', [0, 0], [120, 20], 5, [0,1,2,3,4,5]),
     [340,170,120,1],
     [340, 170]
@@ -105,7 +93,7 @@ platforms[2] = plat3;
 platforms[3] = plat4;
 
 var gameTime = 0;
-
+var isGameOver;
 var gravity = .1; 
 var dir = true;
 //Player touch platform
@@ -130,12 +118,12 @@ function handleInput(dt) {
     if(input.isDown('LEFT') || input.isDown('a')) {
         player.velocity[0] = -playerSpeed * dt;
         if(standing){player.sprite.frames = [4,5];}
-        else{player.sprite.frames = [4,9];}
+        else{player.sprite.frames = [9];}
         dir = true;
     }else if(input.isDown('RIGHT') || input.isDown('d')) {
         player.velocity[0] = playerSpeed * dt;
         if(standing){player.sprite.frames = [6,7];}
-        else{player.sprite.frames = [6, 8];}
+        else{player.sprite.frames = [8];}
         dir = false;
     } else{
         player.velocity[0] = 0;
@@ -257,21 +245,27 @@ function checkRectCollision(rect1, rect2){
 
 function checkPlayerBounds() {
     // Check bounds
-    if(player.pos[0] < 0) {
+    var kill = false;
+    if(player.pos[0] < -150) {
         player.pos[0] = 0;
+        kill = true;
     }
-    else if(player.pos[0] > canvas.width - player.sprite.size[0]) {
+    else if(player.pos[0] > 150+canvas.width - player.sprite.size[0]) {
         player.pos[0] = canvas.width - player.sprite.size[0];
+        kill = true;
     }
 
-    if(player.pos[1] < 0) {
+    if(player.pos[1] < -150) {
         player.pos[1] = 0;
+        kill = true;
     }
-    else if(player.pos[1] > canvas.height - player.sprite.size[1]) {
+    else if(player.pos[1] > 150+canvas.height - player.sprite.size[1]) {
         player.pos[1] = canvas.height - player.sprite.size[1];
         if (player.velocity[1] > 0)
             player.velocity[1] = 0;
+        kill = true;
     }
+    if (kill) gameOver();
 }
 var background = new Image();
 background.src = 'img/background.svg';
@@ -285,14 +279,10 @@ function render() {
     renderEntity(plat2);
     renderEntity(plat3);
     renderEntity(plat4);
-    renderEntity(player);
     
-    //Platforms
-//    for(i=0;i<platforms.length;i++){
-//        var plat = platforms[i];
-//        ctx.fillStyle = "black";
-//        ctx.fillRect(plat.rect[0],plat.rect[1],plat.rect[2],plat.rect[3]);
-//    }
+    if(!isGameOver){
+        renderEntity(player);
+    }
 };
 
 function renderEntity(entity) {
@@ -301,4 +291,19 @@ function renderEntity(entity) {
     entity.sprite.render(ctx);
     ctx.restore();
 }
+// Game over
+function gameOver() {
+    document.getElementById('game-over').style.display = 'block';
+    document.getElementById('game-over-overlay').style.display = 'block';
+    isGameOver = true;
+}
+ //Reset game to original state
+function reset() {
+    document.getElementById('game-over').style.display = 'none';
+    document.getElementById('game-over-overlay').style.display = 'none';
+    isGameOver = false;
+    gameTime = 0;
+  
+    player.pos = [canvas.width/2 -40, 200];
+};
 
