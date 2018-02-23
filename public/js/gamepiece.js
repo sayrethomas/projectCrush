@@ -9,7 +9,17 @@
     
     GamePiece.prototype = {
         
+        
     };
+    /*
+    var attacks = {
+        jab = {
+            pos:[],
+            rect:[],
+            timer:6
+        }
+    }*/
+
     
     window.GamePiece = GamePiece;
 }
