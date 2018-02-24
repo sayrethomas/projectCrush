@@ -44,9 +44,9 @@ function init() {
 
 resources.load([
     'img/charHair2.png',
-    'img/platform.png',
-    'img/platformFloat.png',
-    'img/platformFloat2.png'
+    'img/hyberbolic.png',
+    'img/hourglass.png',
+    'img/chamber.png'
 ]);
 resources.onReady(init);
 
@@ -71,30 +71,30 @@ var platforms = [];
 var passThroughPlatforms = [];
 
 var plat1 = new GamePiece("platform",
-    new Sprite('img/platform.png', [0, 0], [400, 151]),
+    new Sprite('img/hyberbolic.png', [0, 0], [400, 151], 2, [0,1,2]),
     [canvas.width/2-200,canvas.height-150,400,150],
     [canvas.width/2-200, canvas.height-151]
 );
 
 var plat2 = new GamePiece("platform",
-    new Sprite('img/platformFloat.png', [0, 0], [80, 20], 5, [0,1,2,3,4,5]),
+    new Sprite('img/hourglass.png', [0, 0], [80, 60], 5, [0,1,2,3,4,5,6,7,8,9,10]),
     [230,240,60,1],
     [220, 240],
 );
 
 
 var plat3 = new GamePiece("platform",
-    new Sprite('img/platformFloat.png', [0, 0], [80, 20], 5, [0,1,2,3,4,5]),
+    new Sprite('img/hourglass.png', [0, 0], [80, 60], 5, [0,1,2,3,4,5,6,7,8,9,10]),
     [510,240,60,1],
     [500,240]
 );
 
 var plat4 = new GamePiece("platform",
-    new Sprite('img/platformFloat2.png', [0, 0], [120, 20], 5, [0,1,2,3,4,5]),
+    new Sprite('img/chamber.png', [0, 0], [130, 188], 5, [0,1,2,3,4,5]),
     [350,170,100,1],
-    [340, 170]
+    [335, 111]
 );
-
+ 
 
 platforms[0] = plat1;
 passThroughPlatforms[0] = plat2;
@@ -106,8 +106,6 @@ var isGameOver;
 var gravity = .1; 
 var dir = true;
 
-//Player touch platform
-//var standing = true;
 // Speed in pixels per second
 var playerSpeed = 200;
 var playerJumpSpeed = 220;
@@ -164,7 +162,7 @@ function handleInput(dt) {
 function updateEntities(dt) {
     // Update the player sprite animation
     player.sprite.update(dt);
-    
+    plat1.sprite.update(dt);
     plat2.sprite.update(dt);
     plat3.sprite.update(dt);
     plat4.sprite.update(dt);
