@@ -46,7 +46,8 @@ resources.load([
     'img/charHair2.png',
     'img/hyberbolic.png',
     'img/hourglass.png',
-    'img/chamber.png'
+    'img/chamber.png',
+    'img/clouds.png'
 ]);
 resources.onReady(init);
 
@@ -69,6 +70,7 @@ player.jumpAccel = 16;
 
 var platforms = [];
 var passThroughPlatforms = [];
+var clouds = [];
 
 var plat1 = new GamePiece("platform",
     new Sprite('img/hyberbolic.png', [0, 0], [400, 151], 2, [0,1,2]),
@@ -84,7 +86,7 @@ var plat2 = new GamePiece("platform",
 
 
 var plat3 = new GamePiece("platform",
-    new Sprite('img/hourglass.png', [0, 0], [80, 60], 5, [0,1,2,3,4,5,6,7,8,9,10]),
+    new Sprite('img/hourglass.png', [0, 0], [80, 60], 5, [5,6,7,8,9,10,0,1,2,3,4]),
     [510,240,60,1],
     [500,240]
 );
@@ -92,9 +94,9 @@ var plat3 = new GamePiece("platform",
 var plat4 = new GamePiece("platform",
     new Sprite('img/chamber.png', [0, 0], [130, 188], 5, [0,1,2,3,4,5]),
     [350,170,100,1],
-    [335, 111]
+    [335, 112]
 );
- 
+
 
 platforms[0] = plat1;
 passThroughPlatforms[0] = plat2;
@@ -117,7 +119,14 @@ function update(dt) {
     handleInput(dt);
     checkCollisions(dt);
     updateEntities(dt);
-
+    
+    if(Math.random() < 0.005) {
+        clouds.push({
+            pos: [0, Math.random()*canvas.height-100],
+            sprite: new Sprite('img/clouds.png', [0, 0], [51, 26], 2, [0,1,2])
+           
+        });
+    }
 
 };
 
@@ -166,7 +175,17 @@ function updateEntities(dt) {
     plat2.sprite.update(dt);
     plat3.sprite.update(dt);
     plat4.sprite.update(dt);
-    
+    //Update Clouds
+    for(var i=0; i<clouds.length; i++) {
+        clouds[i].pos[0] += 100*dt;
+        clouds[i].sprite.update(dt);
+
+        // Remove if offscreen
+        if(clouds[i].pos[0] > canvas.width) {
+            clouds.splice(i, 1);
+            i--;
+        }
+    }
     player.pos[0] += player.velocity[0];
     player.pos[1] += player.velocity[1];
     
@@ -329,7 +348,7 @@ function render() {
     //ctx.fillColor = "000000";
     //ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(background, 0, 0);
-    
+    renderEntities(clouds);
     renderEntity(plat1);
     renderEntity(plat2);
     renderEntity(plat3);
@@ -338,7 +357,14 @@ function render() {
     if(!isGameOver){
         renderEntity(player);
     }
+    
 };
+
+function renderEntities(list) {
+    for(var i=0; i<list.length; i++) {
+        renderEntity(list[i]);
+    }    
+}
 
 function renderEntity(entity) {
     ctx.save();
@@ -359,6 +385,7 @@ function reset() {
     isGameOver = false;
     gameTime = 0;
   
+    clouds = [];
     player.pos = [canvas.width/2 -40, 200];
 };
 
