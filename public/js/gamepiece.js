@@ -8,7 +8,15 @@
     }
     
     GamePiece.prototype = {
-        
+        atkSet: function(time,velocity,name){
+            this.atkActive = true;
+            this.atkTime = time;
+            this.velocity = velocity;
+            this.atkName = name;
+        },
+        atkUpdate: function(){
+            this.atkTime--;
+        }
         
     };
     /*
