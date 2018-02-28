@@ -69,6 +69,9 @@ var bodies = [];
 bodies[0] = player;
 bodies[1] = otherBody;
 
+bodies[1].pos[0] += 135;
+bodies[1].pos[1] -= 20
+
 player.jump = false;
 player.hasJumps = 3;
 player.standing = false;
@@ -80,8 +83,6 @@ player.jumpMaxSpeed = 220;
 player.accel = 14;
 player.jumpAccel = 16;
 player.zAtkReady = true;
-
-
 
 var platforms = [];
 var passThroughPlatforms = [];
@@ -213,7 +214,7 @@ function handleInput(dt) {
             var atkY = player.pos[1] + 20;
             var atkRect = [atkX,atkY,19,17];
             var shotPiece = new GamePiece("attack",shotSprite,atkRect,[atkX,atkY]);
-            shotPiece.atkSet(12,[5,-2],"jab");
+            shotPiece.atkSet(0,12,[5,-2],"jab");
             attacks[length] = shotPiece;
             player.zAtkReady = false;
         }
@@ -227,7 +228,15 @@ function checkAtkArray(atk,thisName){
 
 function updateEntities(dt) {
     // Update the player sprite animation
-    player.sprite.update(dt);
+    for (var i =0;i<bodies.length;i++){
+        bodies[i].sprite.update(dt);
+        bodies[i].pos[0] += bodies[i].velocity[0];
+        bodies[i].pos[1] += bodies[i].velocity[1];
+    }
+    
+    //player.pos[0] += player.velocity[0];
+    //player.pos[1] += player.velocity[1];
+    
     plat1.sprite.update(dt);
     plat2.sprite.update(dt);
     plat3.sprite.update(dt);
@@ -244,8 +253,6 @@ function updateEntities(dt) {
         }
     }
     
-    player.pos[0] += player.velocity[0];
-    player.pos[1] += player.velocity[1];
     
     //Update Attacks
     for (i=0;i<attacks.length;i++){
@@ -265,116 +272,118 @@ function updateEntities(dt) {
 
 // Collisions
 function checkCollisions(dt) {
-    //Player touch platform
-    player.standing = false;
-    checkPlayerBounds();
-    player.standing = checkPlatformCollisions(dt);
-    checkPassthroughPlatformCollisions(dt,player.standing);
+    //Bodies touch platforms
+    for (var i = 0;i<bodies.length;i++){
+        bodies[i].standing = false;
+        checkPlayerBounds();
+        bodies[i].standing = checkPlatformCollisions(dt,bodies,i);
+        checkPassthroughPlatformCollisions(dt,bodies,i);
+    }
     
 }
 
-function checkPlatformCollisions(dt){
+function checkPlatformCollisions(dt,bodies,q){
     var predictRect = [];
        
     var playRect = [];
-    player.standing = false;
+    bodies[q].standing = false;
     
     
     for(i=0;i<platforms.length;i++){
-        playRect = [player.pos[0],player.pos[1]
-        ,player.sprite.size[0],player.sprite.size[1]];
-        var xSign = Math.sign(player.velocity[0]) * .5 * dt;
-        var ySign = Math.sign(player.velocity[1]) * .5 * dt;
+        playRect = [bodies[q].pos[0],bodies[q].pos[1]
+        ,bodies[q].sprite.size[0],bodies[q].sprite.size[1]];
+        var xSign = Math.sign(bodies[q].velocity[0]) * .5 * dt;
+        var ySign = Math.sign(bodies[q].velocity[1]) * .5 * dt;
         var platRect = platforms[i].rect;
         
         predictRect = playRect;
-        predictRect[0] += player.velocity[0];
+        predictRect[0] += bodies[q].velocity[0];
         
         if (checkRectCollision(predictRect,platRect)){
             predictRect = playRect;
             predictRect[0] += xSign;
-            player.velocity[0] = 0;
+            bodies[q].velocity[0] = 0;
             while (!checkRectCollision(predictRect,platRect)){
-                player.pos[0] += xSign;
+                bodies[q].pos[0] += xSign;
                 predictRect[0] += xSign;
             }
         }
         
-        playRect = [player.pos[0],player.pos[1]
-        ,player.sprite.size[0],player.sprite.size[1]];
+        playRect = [bodies[q].pos[0],bodies[q].pos[1]
+        ,bodies[q].sprite.size[0],bodies[q].sprite.size[1]];
         predictRect = playRect;
-        predictRect[1] += player.velocity[1];
+        predictRect[1] += bodies[q].velocity[1];
         if (checkRectCollision(predictRect,platRect)){
             predictRect = playRect;
             predictRect[1] += ySign;
-            player.velocity[1] = 0;
+            bodies[q].velocity[1] = 0;
             while (!checkRectCollision(predictRect,platRect)){
-                player.pos[1] += ySign;
+                bodies[q].pos[1] += ySign;
                 predictRect[1] += ySign;
             }
         }
         predictRect = playRect;
         predictRect[1] += 1;
         if (checkRectCollision(predictRect,platRect)){
-            player.standing = true;
-            player.hasJumps = 3;
+            bodies[q].standing = true;
+            bodies[q].hasJumps = 3;
         }
     }
     
     
-    if (!player.standing )
-        player.velocity[1] += gravity;
+    if (!bodies[q].standing )
+        bodies[q].velocity[1] += gravity;
     
-    return player.standing;
+    return bodies[q].standing;
     
 }
 
-function checkPassthroughPlatformCollisions(dt,standing){
+function checkPassthroughPlatformCollisions(dt,bodies,q){
     var predictRect = [];
        
     var playRect = [];
     
-    if (player.velocity[1] > 0){
+    if (bodies[q].velocity[1] > 0){
         for(i=0;i<passThroughPlatforms.length;i++){
-            playRect = [player.pos[0],player.pos[1]
-            ,player.sprite.size[0],player.sprite.size[1]];
+            playRect = [bodies[q].pos[0],bodies[q].pos[1]
+            ,bodies[q].sprite.size[0],bodies[q].sprite.size[1]];
             var ySign = Math.sign(player.velocity[1]) * .5 * dt;
             var platRect = passThroughPlatforms[i].rect;
             
             
             if (!checkRectCollision(playRect,platRect)){
-                playRect = [player.pos[0],player.pos[1]
-                ,player.sprite.size[0],player.sprite.size[1]];
+                playRect = [bodies[q].pos[0],bodies[q].pos[1]
+                ,bodies[q].sprite.size[0],bodies[q].sprite.size[1]];
                 predictRect = playRect;
-                predictRect[1] += player.velocity[1];
+                predictRect[1] += bodies[q].velocity[1];
                 if (checkRectCollision(predictRect,platRect)){
                     predictRect = playRect;
                     predictRect[1] += ySign;
-                    player.velocity[1] = 0;
+                    bodies[q].velocity[1] = 0;
                     while (!checkRectCollision(predictRect,platRect)){
-                        player.pos[1] += ySign;
+                        bodies[q].pos[1] += ySign;
                         predictRect[1] += ySign;
                     }
                 }
 
-                if (!player.standing){
+                if (!bodies[q].standing){
                     predictRect = playRect;
                     predictRect[1] += 1;
                     if (checkRectCollision(predictRect,platRect)){
-                        player.standing = true;
-                        player.hasJumps = 3;
-                        if (player.dropThrough){
-                            player.pos[1]++;
+                        bodies[q].standing = true;
+                        bodies[q].hasJumps = 3;
+                        if (bodies[q].dropThrough){
+                            bodies[q].pos[1]++;
                         }
                     } 
                 }
             }
         }
         
-        if (!player.standing )
-            player.velocity[1] += gravity;
+        if (!bodies[q].standing )
+            bodies[q].velocity[1] += gravity;
     }
-    return player.standing;
+    return bodies[q].standing;
 }
 
 function checkRectCollision(rect1, rect2){

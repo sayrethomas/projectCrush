@@ -8,7 +8,8 @@
     }
     
     GamePiece.prototype = {
-        atkSet: function(time,velocity,name){
+        atkSet: function(owner,time,velocity,name){
+            this.owner = owner;
             this.atkActive = true;
             this.atkTime = time;
             this.velocity = velocity;
