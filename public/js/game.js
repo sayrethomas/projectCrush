@@ -55,18 +55,8 @@ resources.onReady(init);
 var player = new GamePiece("player",
     new Sprite('img/charHair2.png', [0, 0], [40, 40], 7, [0, 1]),
     [],
-    [canvas.width/2 -40, 200]
+    [canvas.width/2 -40, 200], 200, 14
 );
-
-player.jump = false;
-player.hasJumps = 3;
-player.standing = false;
-player.onPassThorugh = false;
-player.dropThrough = false;
-player.speed = 200;
-player.jumpSpeed = 220;
-player.accel = 14;
-player.jumpAccel = 16;
 
 var platforms = [];
 var passThroughPlatforms = [];
@@ -79,14 +69,14 @@ var plat1 = new GamePiece("platform",
 );
 
 var plat2 = new GamePiece("platform",
-    new Sprite('img/hourglass.png', [0, 0], [80, 60], 5, [0,1,2,3,4,5,6,7,8,9,10]),
+    new Sprite('img/hourglass.png', [0, 0], [80, 60], 3, [0,1,2,3,4,5,6,7,8,9,10]),
     [230,240,60,1],
-    [220, 240],
+    [220, 240]
 );
 
 
 var plat3 = new GamePiece("platform",
-    new Sprite('img/hourglass.png', [0, 0], [80, 60], 5, [5,6,7,8,9,10,0,1,2,3,4]),
+    new Sprite('img/hourglass.png', [0, 0], [80, 60], 3, [5,6,7,8,9,10,0,1,2,3,4]),
     [510,240,60,1],
     [500,240]
 );
@@ -108,24 +98,23 @@ var isGameOver;
 var gravity = .1; 
 var dir = true;
 
-// Speed in pixels per second
-var playerSpeed = 200;
-var playerJumpSpeed = 220;
-
 // Update game objects
 function update(dt) {
+    var rand = Math.random()*canvas.height-100;
     gameTime += dt;
 
     handleInput(dt);
     checkCollisions(dt);
     updateEntities(dt);
     
-    if(Math.random() < 0.005) {
-        clouds.push({
-            pos: [0, Math.random()*canvas.height-100],
-            sprite: new Sprite('img/clouds.png', [0, 0], [51, 26], 2, [0,1,2])
+    if(Math.random() < 0.002) {
+        clouds.push(
+                    new GamePiece("cloud",
+                    new Sprite('img/clouds.png', [0, 0], [51, 26], 1, [0,1,2]),
+                    [0,0,0,0],
+                    [0, rand])
            
-        });
+        );
     }
 
 };
@@ -150,6 +139,8 @@ function handleInput(dt) {
     if(input.isDown('DOWN') || input.isDown('s')) {
             player.velocity[1] = player.speed * dt;
             player.dropThrough = true;
+            if(dir){player.sprite.frames = [5];}
+        else{player.sprite.frames =  [6];}
         } else{
             player.dropThrough = false;
         }
@@ -182,7 +173,7 @@ function updateEntities(dt) {
 
         // Remove if offscreen
         if(clouds[i].pos[0] > canvas.width) {
-            clouds.splice(i, 1);
+            clouds.splice(i,1);
             i--;
         }
     }
@@ -199,7 +190,7 @@ function checkCollisions(dt) {
     player.standing = false;
     checkPlayerBounds();
     player.standing = checkPlatformCollisions(dt);
-    checkPassthroughPlatformCollisions(dt,player.standing);
+    checkPassthroughPlatformCollisions(dt);
     
 }
 
@@ -207,8 +198,6 @@ function checkPlatformCollisions(dt){
     var predictRect = [];
        
     var playRect = [];
-    player.standing = false;
-    
     
     for(i=0;i<platforms.length;i++){
         playRect = [player.pos[0],player.pos[1]
@@ -260,7 +249,7 @@ function checkPlatformCollisions(dt){
     
 }
 
-function checkPassthroughPlatformCollisions(dt,standing){
+function checkPassthroughPlatformCollisions(dt){
     var predictRect = [];
        
     var playRect = [];
