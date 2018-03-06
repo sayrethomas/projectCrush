@@ -84,6 +84,8 @@ player.accel = 14;
 player.jumpAccel = 16;
 player.zAtkReady = true;
 
+otherBody.hitBy;
+
 var platforms = [];
 var passThroughPlatforms = [];
 var clouds = [];
@@ -174,7 +176,7 @@ function handleInput(dt) {
                 player.velocity[0] += player.accel * dt;
             }
         }
-        //player.velocity[0] = player.speed * dt;
+        
         if(player.standing){player.sprite.frames = [6,7];}
         else{player.sprite.frames = [8];}
         dir = false;
@@ -232,6 +234,7 @@ function updateEntities(dt) {
         bodies[i].sprite.update(dt);
         bodies[i].pos[0] += bodies[i].velocity[0];
         bodies[i].pos[1] += bodies[i].velocity[1];
+        bodies[i].rect = [bodies[i].pos[0],bodies[i].pos[1],bodies[i].sprite.size[0],bodies[i].sprite.size[1]];
     }
     
     //player.pos[0] += player.velocity[0];
@@ -258,9 +261,8 @@ function updateEntities(dt) {
     for (i=0;i<attacks.length;i++){
         attacks[i].atkUpdate();
         attacks[i].pos[0] += attacks[i].velocity[0];
-        //player.pos[0] -= attacks[i].velocity[0];
         attacks[i].pos[1] += attacks[i].velocity[1];
-        //player.pos[1] -= attacks[i].velocity[1];
+        attacks[i].rect = [attacks[i].pos[0],attacks[i].pos[1],attacks[i].sprite.size[0],attacks[i].sprite.size[1]];
         if (attacks[i].atkTime <= 0){
             attacks.splice(i,1);
         }
@@ -278,6 +280,8 @@ function checkCollisions(dt) {
         checkPlayerBounds();
         bodies[i].standing = checkPlatformCollisions(dt,bodies,i);
         checkPassthroughPlatformCollisions(dt,bodies,i);
+        checkAttackCollisions(dt, bodies,i)
+        
     }
     
 }
@@ -330,12 +334,10 @@ function checkPlatformCollisions(dt,bodies,q){
         }
     }
     
-    
     if (!bodies[q].standing )
         bodies[q].velocity[1] += gravity;
     
     return bodies[q].standing;
-    
 }
 
 function checkPassthroughPlatformCollisions(dt,bodies,q){
@@ -386,6 +388,22 @@ function checkPassthroughPlatformCollisions(dt,bodies,q){
     return bodies[q].standing;
 }
 
+function checkAttackCollisions(dt,bodies,q){
+    for(var j = 0;j<attacks.length;j++){
+        var atk = attacks[j];
+        var aRect = atk.rect;
+        var bRect = bodies[q].rect;
+        if (checkRectCollision(aRect,bRect/*atk.rect,bodies[q].rect*/)){
+            if (q != atk.owner && attacks[j].atkActive){
+                //bodies[q].velocity[1] = -100 * dt;
+                bodies[q].bodyHitProcess(dt, atk);
+                attacks[j].atkActive = false;
+                console.log("HIT");
+            }
+        }
+    }
+}
+
 function checkRectCollision(rect1, rect2){
     var hit = true;
     if (rect1[0] + rect1[2] < rect2[0] 
@@ -422,10 +440,9 @@ function checkPlayerBounds() {
 }
 var background = new Image();
 background.src = 'img/background.svg';
+
 // Draw everything
 function render() {
-    //ctx.fillColor = "000000";
-    //ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(background, 0, 0);
     renderEntities(clouds);
     renderEntities(platforms);

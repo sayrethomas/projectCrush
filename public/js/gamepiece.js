@@ -17,6 +17,9 @@
         },
         atkUpdate: function(){
             this.atkTime--;
+        },
+        bodyHitProcess: function(dt, atkPiece){
+            this.velocity[1] = -100 * dt;
         }
         
     };
