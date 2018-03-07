@@ -70,7 +70,7 @@ bodies[0] = player;
 bodies[1] = otherBody;
 
 bodies[1].pos[0] += 135;
-bodies[1].pos[1] -= 20
+bodies[1].pos[1] -= 20;
 
 player.jump = false;
 player.hasJumps = 3;
@@ -83,6 +83,7 @@ player.jumpMaxSpeed = 220;
 player.accel = 14;
 player.jumpAccel = 16;
 player.zAtkReady = true;
+player.dir = true;
 
 otherBody.hitBy;
 
@@ -122,12 +123,10 @@ passThroughPlatforms[0] = plat2;
 passThroughPlatforms[1] = plat3;
 passThroughPlatforms[2] = plat4;
 
-
-
 var gameTime = 0;
 var isGameOver;
 var gravity = .1; 
-var dir = true;
+//var dir = true;
 
 // Speed in pixels per second
 var playerSpeed = 200;
@@ -165,7 +164,7 @@ function handleInput(dt) {
         
         if(player.standing){player.sprite.frames = [4,5];}
         else{player.sprite.frames = [9];}
-        dir = true;
+        player.dir = true;
     }else if(input.isDown('RIGHT') || input.isDown('d')) {
         if (player.velocity[0] < player.maxWalkSpeed * dt){
             player.velocity[0] += player.accel * dt;
@@ -179,13 +178,14 @@ function handleInput(dt) {
         
         if(player.standing){player.sprite.frames = [6,7];}
         else{player.sprite.frames = [8];}
-        dir = false;
+        player.dir = false;
     }else{
         player.velocity[0] -= Math.sign(player.velocity[0]) * player.accel * dt * 2;
         if (Math.abs(player.velocity[0]) < player.accel * dt){
             player.velocity[0] = 0;
         }
-        if(dir){player.sprite.frames = [0,1];}
+        
+        if(player.dir){player.sprite.frames = [0,1];}
         else{player.sprite.frames = [2,3];}
     }
     
@@ -195,7 +195,8 @@ function handleInput(dt) {
             player.hasJumps--;
             player.jump = true;  
         }
-        if(dir){player.sprite.frames = [9];}
+        
+        if(player.dir){player.sprite.frames = [9];}
         else{player.sprite.frames =  [8];}
     }
     else{
@@ -211,12 +212,19 @@ function handleInput(dt) {
     if (input.isDown('Z')){
         var jabExists  = attacks.findIndex(checkAtkArray,"jab");
         if (player.zAtkReady && jabExists == -1){
-            var shotSprite = new Sprite('img/clouds.png', [0, 0], [51, 26], 2, [0,1,2]);//new Sprite("img/testShot.png",[0,0],[19,17],1,[0]);
-            var atkX = player.pos[0];
+            var atkXSpd = 10;
+            var atkX = player.pos[0] + (19 * !player.dir);
+            atkXSpd = atkXSpd - (atkXSpd * 2* player.dir);
+            if (atkXSpd < 0){
+                var sprPos = [0,0];
+            } else{
+                var sprPos = [19,0];
+            }
             var atkY = player.pos[1] + 20;
             var atkRect = [atkX,atkY,19,17];
+            var shotSprite = new Sprite('img/testShot.png', sprPos, [19, 15], 1, [0]);//new Sprite("img/testShot.png",[0,0],[19,17],1,[0]);
             var shotPiece = new GamePiece("attack",shotSprite,atkRect,[atkX,atkY]);
-            shotPiece.atkSet(0,12,[5,-2],"jab");
+            shotPiece.atkSet(0,30,[atkXSpd,0],"jab");
             attacks[length] = shotPiece;
             player.zAtkReady = false;
         }
@@ -229,16 +237,13 @@ function checkAtkArray(atk,thisName){
 }
 
 function updateEntities(dt) {
-    // Update the player sprite animation
+    // Update player bodies
     for (var i =0;i<bodies.length;i++){
         bodies[i].sprite.update(dt);
         bodies[i].pos[0] += bodies[i].velocity[0];
         bodies[i].pos[1] += bodies[i].velocity[1];
         bodies[i].rect = [bodies[i].pos[0],bodies[i].pos[1],bodies[i].sprite.size[0],bodies[i].sprite.size[1]];
     }
-    
-    //player.pos[0] += player.velocity[0];
-    //player.pos[1] += player.velocity[1];
     
     plat1.sprite.update(dt);
     plat2.sprite.update(dt);
@@ -395,10 +400,8 @@ function checkAttackCollisions(dt,bodies,q){
         var bRect = bodies[q].rect;
         if (checkRectCollision(aRect,bRect/*atk.rect,bodies[q].rect*/)){
             if (q != atk.owner && attacks[j].atkActive){
-                //bodies[q].velocity[1] = -100 * dt;
                 bodies[q].bodyHitProcess(dt, atk);
                 attacks[j].atkActive = false;
-                console.log("HIT");
             }
         }
     }
@@ -451,7 +454,6 @@ function render() {
     
     if(!isGameOver){
         renderEntities(bodies);
-        //renderEntity(player);
     }
     
 };
