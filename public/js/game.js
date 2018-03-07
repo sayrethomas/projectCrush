@@ -56,7 +56,7 @@ resources.onReady(init);
 var player = new GamePiece("player",
     new Sprite('img/charHair2.png', [0, 0], [40, 40], 7, [0, 1]),
     [],
-    [canvas.width/2 -40, 200]
+    [canvas.width/2 -40, 200], 150, 14
 );
 
 var otherBody = new GamePiece("player",
@@ -70,19 +70,7 @@ bodies[0] = player;
 bodies[1] = otherBody;
 
 bodies[1].pos[0] += 135;
-bodies[1].pos[1] -= 20
-
-player.jump = false;
-player.hasJumps = 3;
-player.standing = false;
-player.onPassThorugh = false;
-player.dropThrough = false;
-player.maxSpeed = 150;
-player.maxWalkSpeed = 200;
-player.jumpMaxSpeed = 220;
-player.accel = 14;
-player.jumpAccel = 16;
-player.zAtkReady = true;
+bodies[1].pos[1] -= 20;
 
 var platforms = [];
 var passThroughPlatforms = [];
@@ -271,7 +259,8 @@ function updateEntities(dt) {
 }
 
 // Collisions
-function checkCollisions(dt) {
+function checkCollisions(dt)
+{
     //Bodies touch platforms
     for (var i = 0;i<bodies.length;i++){
         bodies[i].standing = false;
