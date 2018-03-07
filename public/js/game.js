@@ -210,8 +210,9 @@ function handleInput(dt) {
     }  
     
     if (input.isDown('Z')){
-        var jabExists  = attacks.findIndex(checkAtkArray,"jab");
-        if (player.zAtkReady && jabExists == -1){
+        var jabExists  = attackExists("jab");//attacks.findIndex(checkAtkArray,"jab");
+        //console.log(jabExists);
+        if (player.zAtkReady && !jabExists){
             var atkXSpd = 10;
             var atkX = player.pos[0] + (19 * !player.dir);
             atkXSpd = atkXSpd - (atkXSpd * 2* player.dir);
@@ -232,8 +233,13 @@ function handleInput(dt) {
         player.zAtkReady = true;
 }
 
-function checkAtkArray(atk,thisName){
-    return atk.atkName == thisName;
+function attackExists(name){
+    var ret = false;
+    for(var i = 0;i<attacks.length;i++){
+        if (attacks[i].atkName == name)
+            ret = true;
+    }
+    return ret;
 }
 
 function updateEntities(dt) {
