@@ -124,7 +124,6 @@ var playerJumpSpeed = 220;
     gameTime += dt;
 
     handleInput.inputs(dt);
-    //handleInput(dt);
     collisions.checkCollisions(dt);
     updateEntities(dt);
     
@@ -144,10 +143,7 @@ function updateEntities(dt) {
         bodies[i].pos[0] += bodies[i].velocity[0];
         bodies[i].pos[1] += bodies[i].velocity[1];
     }
-    
-    //player.pos[0] += player.velocity[0];
-    //player.pos[1] += player.velocity[1];
-    
+
     plat1.sprite.update(dt);
     plat2.sprite.update(dt);
     plat3.sprite.update(dt);
