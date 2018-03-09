@@ -72,18 +72,7 @@ bodies[1] = otherBody;
 bodies[1].pos[0] += 135;
 bodies[1].pos[1] -= 20;
 
-player.jump = false;
-player.hasJumps = 3;
-player.standing = false;
-player.onPassThorugh = false;
-player.dropThrough = false;
-player.maxSpeed = 150;
-player.maxWalkSpeed = 200;
-player.jumpMaxSpeed = 220;
-player.accel = 14;
-player.jumpAccel = 16;
-player.zAtkReady = true;
-player.dir = true;
+
 
 otherBody.hitBy;
 
@@ -137,8 +126,11 @@ function update(dt) {
     gameTime += dt;
 
     handleInput(dt);
+    console.log("input done");
     checkCollisions(dt);
+    console.log("collision done");
     updateEntities(dt);
+    console.log("update done");
     
     if(Math.random() < 0.005) {
         clouds.push({
@@ -204,6 +196,7 @@ function handleInput(dt) {
         if(input.isDown('DOWN') || input.isDown('s')) {
             player.velocity[1] = player.jumpMaxSpeed * dt;
             player.dropThrough = true;
+            //console.log("PING");
         } else{
             player.dropThrough = false;
         }
@@ -238,7 +231,9 @@ function attackExists(name){
     for(var i = 0;i<attacks.length;i++){
         if (attacks[i].atkName == name)
             ret = true;
+            //console.log("PING");
     }
+    //console.log("Out of attack exists");
     return ret;
 }
 
@@ -276,6 +271,7 @@ function updateEntities(dt) {
         attacks[i].rect = [attacks[i].pos[0],attacks[i].pos[1],attacks[i].sprite.size[0],attacks[i].sprite.size[1]];
         if (attacks[i].atkTime <= 0){
             attacks.splice(i,1);
+            //console.log("PING");
         }
     }
     
@@ -289,9 +285,13 @@ function checkCollisions(dt) {
     for (var i = 0;i<bodies.length;i++){
         bodies[i].standing = false;
         checkPlayerBounds();
+        console.log("player bounds done");
         bodies[i].standing = checkPlatformCollisions(dt,bodies,i);
+        console.log("platform done");
         checkPassthroughPlatformCollisions(dt,bodies,i);
+        console.log("passthrough done");
         checkAttackCollisions(dt, bodies,i)
+        console.log("attack done");
         
     }
     
@@ -358,25 +358,37 @@ function checkPassthroughPlatformCollisions(dt,bodies,q){
     
     if (bodies[q].velocity[1] > 0){
         for(i=0;i<passThroughPlatforms.length;i++){
+            
+            console.log("pass 1");
+            
             playRect = [bodies[q].pos[0],bodies[q].pos[1]
             ,bodies[q].sprite.size[0],bodies[q].sprite.size[1]];
             var ySign = Math.sign(player.velocity[1]) * .5 * dt;
             var platRect = passThroughPlatforms[i].rect;
             
+            console.log("pass 2");
             
             if (!checkRectCollision(playRect,platRect)){
                 playRect = [bodies[q].pos[0],bodies[q].pos[1]
                 ,bodies[q].sprite.size[0],bodies[q].sprite.size[1]];
                 predictRect = playRect;
                 predictRect[1] += bodies[q].velocity[1];
+                
+                console.log("pass 3");
+                
                 if (checkRectCollision(predictRect,platRect)){
                     predictRect = playRect;
                     predictRect[1] += ySign;
                     bodies[q].velocity[1] = 0;
-                    while (!checkRectCollision(predictRect,platRect)){
+                    var yBump = 0;
+                    while (!checkRectCollision(predictRect,platRect)
+                    && yBump < 20){
                         bodies[q].pos[1] += ySign;
                         predictRect[1] += ySign;
                     }
+                    
+                    console.log("pass 4");
+                    
                 }
 
                 if (!bodies[q].standing){
