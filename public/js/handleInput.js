@@ -29,7 +29,7 @@
         
         if(player.standing){player.sprite.frames = [4,5];}
         else{player.sprite.frames = [9];}
-        dir = true;
+        player.dir = true;
     }else if(input.isDown('RIGHT') || input.isDown('d')) {
         if (player.velocity[0] < player.maxWalkSpeed * dt){
             player.velocity[0] += player.accel * dt;
@@ -43,13 +43,13 @@
         //player.velocity[0] = player.speed * dt;
         if(player.standing){player.sprite.frames = [6,7];}
         else{player.sprite.frames = [8];}
-        dir = false;
+        player.dir = false;
     }else{
         player.velocity[0] -= Math.sign(player.velocity[0]) * player.accel * dt * 2;
         if (Math.abs(player.velocity[0]) < player.accel * dt){
             player.velocity[0] = 0;
         }
-        if(dir){player.sprite.frames = [0,1];}
+        if(player.dir){player.sprite.frames = [0,1];}
         else{player.sprite.frames = [2,3];}
     }
     
@@ -59,7 +59,7 @@
             player.hasJumps--;
             player.jump = true;  
         }
-        if(dir){player.sprite.frames = [9];}
+        if(player.dir){player.sprite.frames = [9];}
         else{player.sprite.frames =  [8];}
     }
     else{

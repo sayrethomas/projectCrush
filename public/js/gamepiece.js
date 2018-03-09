@@ -18,6 +18,7 @@
             this.jumpMaxSpeed = 220;
             this.jumpAccel = 16;
             this.zAtkReady = true;
+            this.dir = true;
         }
     }
     

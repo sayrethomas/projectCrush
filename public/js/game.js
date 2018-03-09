@@ -114,11 +114,7 @@ passThroughPlatforms[2] = plat4;
 var gameTime = 0;
 var isGameOver;
 var gravity = .1; 
-//var dir = true;
 
-// Speed in pixels per second
-var playerSpeed = 200;
-var playerJumpSpeed = 220;
 
 // Update game objects
  function update(dt) {
