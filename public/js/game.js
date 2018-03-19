@@ -289,7 +289,7 @@ function checkCollisions(dt) {
         //console.log("platform done");
         checkPassthroughPlatformCollisions(dt,bodies,i);
         //console.log("passthrough done");
-        checkAttackCollisions(dt, bodies,i)
+        checkAttackCollisions(dt, bodies,i);
         //console.log("attack done");
         
     }
