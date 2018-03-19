@@ -271,7 +271,6 @@ function updateEntities(dt) {
         attacks[i].rect = [attacks[i].pos[0],attacks[i].pos[1],attacks[i].sprite.size[0],attacks[i].sprite.size[1]];
         if (attacks[i].atkTime <= 0){
             attacks.splice(i,1);
-            //console.log("PING");
         }
     }
     
