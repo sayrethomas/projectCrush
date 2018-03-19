@@ -218,7 +218,7 @@ function handleInput(dt) {
             var atkRect = [atkX,atkY,19,17];
             var shotSprite = new Sprite('img/testShot.png', sprPos, [19, 15], 1, [0]);//new Sprite("img/testShot.png",[0,0],[19,17],1,[0]);
             var shotPiece = new GamePiece("attack",shotSprite,atkRect,[atkX,atkY]);
-            shotPiece.atkSet(0,30,[atkXSpd,0],"jab");
+            shotPiece.atkSet(0,6,[atkXSpd,0],"jab");
             attacks[length] = shotPiece;
             player.zAtkReady = false;
         }
@@ -285,13 +285,13 @@ function checkCollisions(dt) {
     for (var i = 0;i<bodies.length;i++){
         bodies[i].standing = false;
         checkPlayerBounds();
-        console.log("player bounds done");
+        //console.log("player bounds done");
         bodies[i].standing = checkPlatformCollisions(dt,bodies,i);
-        console.log("platform done");
+        //console.log("platform done");
         checkPassthroughPlatformCollisions(dt,bodies,i);
-        console.log("passthrough done");
+        //console.log("passthrough done");
         checkAttackCollisions(dt, bodies,i)
-        console.log("attack done");
+        //console.log("attack done");
         
     }
     
@@ -359,14 +359,12 @@ function checkPassthroughPlatformCollisions(dt,bodies,q){
     if (bodies[q].velocity[1] > 0){
         for(i=0;i<passThroughPlatforms.length;i++){
             
-            console.log("pass 1");
             
             playRect = [bodies[q].pos[0],bodies[q].pos[1]
             ,bodies[q].sprite.size[0],bodies[q].sprite.size[1]];
-            var ySign = Math.sign(player.velocity[1]) * .5 * dt;
+            var ySign = Math.sign(bodies[q].velocity[1]) * .5 * dt;
             var platRect = passThroughPlatforms[i].rect;
             
-            console.log("pass 2");
             
             if (!checkRectCollision(playRect,platRect)){
                 playRect = [bodies[q].pos[0],bodies[q].pos[1]
@@ -374,7 +372,6 @@ function checkPassthroughPlatformCollisions(dt,bodies,q){
                 predictRect = playRect;
                 predictRect[1] += bodies[q].velocity[1];
                 
-                console.log("pass 3");
                 
                 if (checkRectCollision(predictRect,platRect)){
                     predictRect = playRect;
@@ -387,7 +384,6 @@ function checkPassthroughPlatformCollisions(dt,bodies,q){
                         predictRect[1] += ySign;
                     }
                     
-                    console.log("pass 4");
                     
                 }
 

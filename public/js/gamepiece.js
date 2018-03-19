@@ -36,16 +36,7 @@
         bodyHitProcess: function(dt, atkPiece){
             this.velocity[1] = -100 * dt;
         }
-        
     };
-    /*
-    var attacks = {
-        jab = {
-            pos:[],
-            rect:[],
-            timer:6
-        }
-    }*/
 
     
     window.GamePiece = GamePiece;
