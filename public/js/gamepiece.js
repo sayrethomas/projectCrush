@@ -1,8 +1,10 @@
 (function(){
-    function GamePiece(type,sprite,rect,pos){
+    function GamePiece(type,sprite,rect,pos,speed,accel,pass){
         this.type = type;
         this.rect = rect;
         this.pos = pos;
+        this.speed = speed;
+        this.accel = accel;
         this.velocity = [0,0];
         this.sprite = sprite;
         
@@ -21,6 +23,8 @@
             this.dir = true;
         }
     }
+    
+    
     
     GamePiece.prototype = {
         atkSet: function(owner,time,velocity,name){
