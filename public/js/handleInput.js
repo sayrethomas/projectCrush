@@ -88,7 +88,7 @@
             var atkRect = [atkX,atkY,19,17];
             var shotSprite = new Sprite('img/testShot.png', sprPos, [19, 15], 1, [0]);//new Sprite("img/testShot.png",[0,0],[19,17],1,[0]);
             var shotPiece = new GamePiece("attack",shotSprite,atkRect,[atkX,atkY]);
-            shotPiece.atkSet(0,30,[atkXSpd,0],"jab");
+            shotPiece.atkSet(0,30,[atkXSpd,0],"jab", player.pos[0]);
             attacks[length] = shotPiece;
             player.zAtkReady = false;
         }

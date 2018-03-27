@@ -56,21 +56,20 @@ resources.onReady(init);
 var player = new GamePiece("player",
     new Sprite('img/charHair2.png', [0, 0], [40, 40], 7, [0, 1]),
     [],
-    [canvas.width/2 -40, 200]
+    [canvas.width/2 -130, canvas.height/2-40]
 );
 
 var otherBody = new GamePiece("player",
     new Sprite('img/charHair2.png', [0, 0], [40, 40], 7, [0, 1]),
     [],
-    [canvas.width/2 -40, 200]
+    [canvas.width/2 +110, canvas.height/2-40]
 );
 
 var bodies = [];
 bodies[0] = player;
 bodies[1] = otherBody;
 
-bodies[1].pos[0] += 135;
-bodies[1].pos[1] -= 20;
+
 
 
 otherBody.hitBy;
@@ -140,6 +139,7 @@ function updateEntities(dt) {
         bodies[i].pos[0] += bodies[i].velocity[0];
         bodies[i].pos[1] += bodies[i].velocity[1];
         bodies[i].rect = [bodies[i].pos[0],bodies[i].pos[1],bodies[i].sprite.size[0],bodies[i].sprite.size[1]];
+        bodies[i].bodyHitProcess(dt);
     }
     plat1.sprite.update(dt);
     plat2.sprite.update(dt);
@@ -173,30 +173,6 @@ function updateEntities(dt) {
     
 }
 
-function checkPlayerBounds() {
-    // Check bounds
-    var kill = false;
-    if(player.pos[0] < -150) {
-        player.pos[0] = 0;
-        kill = true;
-    }
-    else if(player.pos[0] > 150+canvas.width - player.sprite.size[0]) {
-        player.pos[0] = canvas.width - player.sprite.size[0];
-        kill = true;
-    }
-
-    if(player.pos[1] < -150) {
-        player.pos[1] = 0;
-        kill = true;
-    }
-    else if(player.pos[1] > 150+canvas.height - player.sprite.size[1]) {
-        player.pos[1] = canvas.height - player.sprite.size[1];
-        if (player.velocity[1] > 0)
-            player.velocity[1] = 0;
-        kill = true;
-    }
-    if (kill) gameOver();
-}
 var background = new Image();
 background.src = 'img/background.svg';
 
@@ -238,8 +214,9 @@ function reset() {
     document.getElementById('game-over-overlay').style.display = 'none';
     isGameOver = false;
     gameTime = 0;
-  
+    
     clouds = [];
-    player.pos = [canvas.width/2 -40, 200];
+    player.pos = [canvas.width/2 -160, canvas.height/2-40];
+    otherBody.pos = [canvas.width/2 +110, canvas.height/2-40];
 };
 

@@ -20,7 +20,32 @@
         }
 
     }
+        function checkPlayerBounds() {
+        // Check bounds
+        var kill = false;
+        for (var i = 0;i<bodies.length;i++){
+            if(bodies[i].pos[0] < -150) {
+                bodies[i].pos[0] = 0;
+                kill = true;
+            }
+            else if(bodies[i].pos[0] > 150+canvas.width - bodies[i].sprite.size[0]) {
+                bodies[i].pos[0] = canvas.width - bodies[i].sprite.size[0];
+                kill = true;
+            }
 
+            if(bodies[i].pos[1] < -150) {
+                bodies[i].pos[1] = 0;
+                kill = true;
+            }
+            else if(bodies[i].pos[1] > 150+canvas.height - bodies[i].sprite.size[1]) {
+                bodies[i].pos[1] = canvas.height - bodies[i].sprite.size[1];
+                if (bodies[i].velocity[1] > 0)
+                    bodies[i].velocity[1] = 0;
+                kill = true;
+            }
+    }
+        if (kill) gameOver();
+}
     function checkPlatformCollisions(dt,bodies,q){
         var predictRect = [];
 
@@ -130,7 +155,10 @@
             var bRect = bodies[q].rect;
             if (checkRectCollision(aRect,bRect/*atk.rect,bodies[q].rect*/)){
                 if (q != atk.owner && attacks[j].atkActive){
-                    bodies[q].bodyHitProcess(dt, atk);
+                    if(bodies[q].pos[0] > atk.atkOrig) { bodies[q].dirOfHit = false;}
+                    else {bodies[q].dirOfHit = true;}
+                    bodies[q].stun = true;
+                    bodies[q].placeOfHit = bodies[q].pos[0];
                     attacks[j].atkActive = false;
                 }
             }
