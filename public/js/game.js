@@ -218,5 +218,6 @@ function reset() {
     clouds = [];
     player.pos = [canvas.width/2 -160, canvas.height/2-40];
     otherBody.pos = [canvas.width/2 +110, canvas.height/2-40];
+    otherBody.weight = 100;
 };
 
