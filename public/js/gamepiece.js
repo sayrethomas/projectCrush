@@ -21,6 +21,7 @@
             this.jumpAccel = 16;
             this.zAtkReady = true;
             this.dir = true;
+            this.attacking = false;
         }
     }
     
@@ -39,6 +40,9 @@
         },
         bodyHitProcess: function(dt, atkPiece){
             this.velocity[1] = -100 * dt;
+        },
+        bodyAtkProcess: function(atkPiece){
+            
         }
     };
 
