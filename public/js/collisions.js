@@ -155,8 +155,12 @@
             var bRect = bodies[q].rect;
             if (checkRectCollision(aRect,bRect/*atk.rect,bodies[q].rect*/)){
                 if (q != atk.owner && attacks[j].atkActive){
-                    if(bodies[q].pos[0] > atk.atkOrig) { bodies[q].dirOfHit = false;}
-                    else {bodies[q].dirOfHit = true;}
+                    if(bodies[q].pos[0] > atk.atkOrig) { 
+                        bodies[q].dirOfHit = false;
+                    }
+                    else {
+                        bodies[q].dirOfHit = true;
+                    }
                     bodies[q].stun = true;
                     bodies[q].placeOfHit = bodies[q].pos[0];
                     attacks[j].atkActive = false;

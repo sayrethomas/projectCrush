@@ -2,6 +2,13 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/droib/Dropbox/GameDes/projectCrush/public/js/gamepiece.js</file>
+            <file>file:/C:/Users/droib/Dropbox/GameDes/projectCrush/public/js/handleInput.js</file>
+            <file>file:/C:/Users/droib/Dropbox/GameDes/projectCrush/public/js/getHit.js</file>
+            <file>file:/C:/Users/droib/Dropbox/GameDes/projectCrush/public/js/input.js</file>
+            <file>file:/C:/Users/droib/Dropbox/GameDes/projectCrush/public/js/collisions.js</file>
+            <file>file:/C:/Users/droib/Dropbox/GameDes/projectCrush/public/js/game.js</file>
+        </group>
     </open-files>
 </project-private>

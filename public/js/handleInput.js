@@ -8,12 +8,18 @@
 
 (function() {
     function attackExists(name){
-    var ret = false;
-        for(var i = 0;i<attacks.length;i++){
-            if (attacks[i].atkName == name)
-                ret = true;
+        var ret = false;
+            for(var i = 0;i<attacks.length;i++){
+                if (attacks[i].atkName == name)
+                    ret = true;
+            }
+        return ret;
+    }
+    function dummyInputs(dt){
+        otherBody.velocity[0] -= Math.sign(otherBody.velocity[0]) * otherBody.accel * dt;
+        if (Math.abs(otherBody.velocity[0]) < otherBody.accel * dt){
+            otherBody.velocity[0] = 0;
         }
-    return ret;
     }
     function inputs(dt){
         if(input.isDown('LEFT') || input.isDown('a')) {
@@ -34,18 +40,24 @@
         if (player.velocity[0] < player.maxWalkSpeed * dt){
             player.velocity[0] += player.accel * dt;
             
+            
             if (player.velocity[0] > player.maxWalkSpeed * dt){
+                console.log("Max is: " + player.maxWalkSpeed * dt)
+                console.log("equaled from " + player.velocity[0]);
                 player.velocity[0] = player.maxWalkSpeed * dt;
             }else if (player.velocity[0] > 0){
+                console.log("Max is: " + player.maxWalkSpeed * dt)
+                console.log("reduced from " + player.velocity[0]);
                 player.velocity[0] += player.accel * dt;
             }
         }
-        //player.velocity[0] = player.speed * dt;
+        
         if(player.standing){player.sprite.frames = [6,7];}
         else{player.sprite.frames = [8];}
         player.dir = false;
     }else{
         player.velocity[0] -= Math.sign(player.velocity[0]) * player.accel * dt * 2;
+        
         if (Math.abs(player.velocity[0]) < player.accel * dt){
             player.velocity[0] = 0;
         }
@@ -72,11 +84,12 @@
         }
     }  
     
+    //Attacking
     if (input.isDown('Z')){
         var jabExists  = attackExists("jab");//attacks.findIndex(checkAtkArray,"jab");
         //console.log(jabExists);
         if (player.zAtkReady && !jabExists){
-            var atkXSpd = 10;
+            var atkXSpd = 15;
             var atkX = player.pos[0] + (19 * !player.dir);
             atkXSpd = atkXSpd - (atkXSpd * 2* player.dir);
             if (atkXSpd < 0){
@@ -88,7 +101,7 @@
             var atkRect = [atkX,atkY,19,17];
             var shotSprite = new Sprite('img/testShot.png', sprPos, [19, 15], 1, [0]);//new Sprite("img/testShot.png",[0,0],[19,17],1,[0]);
             var shotPiece = new GamePiece("attack",shotSprite,atkRect,[atkX,atkY]);
-            shotPiece.atkSet(0,30,[atkXSpd,0],"jab", player.pos[0]);
+            shotPiece.atkSet(0,6,[atkXSpd,0],"jab", player.pos[0]);
             attacks[length] = shotPiece;
             player.zAtkReady = false;
         }
@@ -96,7 +109,8 @@
         player.zAtkReady = true;
     }
 window.handleInput = {
-       inputs: inputs
+       inputs: inputs,
+       dummyInputs: dummyInputs
     };
 })();
 

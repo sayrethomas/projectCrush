@@ -118,8 +118,12 @@ var gravity = .1;
 // Update game objects
  function update(dt) {
     gameTime += dt;
-
+    var printInfo = false;
+    if (player.velocity[0] != 0)
+        printInfo = true;
+    
     handleInput.inputs(dt);
+    handleInput.dummyInputs(dt);
     collisions.checkCollisions(dt);
     updateEntities(dt);
     

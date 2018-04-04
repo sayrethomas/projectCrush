@@ -12,7 +12,7 @@
             this.weight = 100;
             this.strength = 100;
             this.speed = 100;
-            this.maxWalkSpeed = 100*this.speed/this.weight;
+            this.maxWalkSpeed = 200*this.speed/this.weight;
             this.jumpMaxSpeed = 200*this.strength/this.weight;
             this.attackPower = 100*this.strength/this.speed;;
             this.jump = false;
@@ -25,6 +25,7 @@
             this.zAtkReady = true;
             this.dir = true;
             this.stun = false;
+            this.stunFrames = 0;
             this.placeOfHit = 0;
             this.dirOfHit = false;
         }
@@ -44,18 +45,9 @@
             this.atkTime--;
         },
         bodyHitProcess: function(dt){
-                getHit.sideJab(this, dt);
+            getHit.sideJab(this, dt);
         }
-        
     };
-    /*
-    var attacks = {
-        jab = {
-            pos:[],
-            rect:[],
-            timer:6
-        }
-    }*/
 
     
     window.GamePiece = GamePiece;

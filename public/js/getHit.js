@@ -5,27 +5,30 @@
  */
 (function() {
     
-    function sideJab(player, dt){
-        var fly = 300 - player.weight;
-        if(player.stun == true && player.dirOfHit == false){
-            player.velocity[1] = -fly * dt;
-            player.velocity[0] += fly/3 * dt;
-            if(player.pos[0] > player.placeOfHit+fly/3){
-                player.weight -= 30;
-                player.velocity[0] = 0;
-                player.stun = false;
-            }
+    function sideJab(body, dt){
+        
+        var fly = 100 - body.weight;
+        if (body.stun){
+            body.weight -= 30;
+            body.stunFrames = 5;
+            body.stun = false;
         }
-        else if(player.stun == true && player.dirOfHit == true){
-            player.velocity[1] = -fly * dt;
-            player.velocity[0] -= fly/3 * dt;
-            if(player.pos[0] < player.placeOfHit-fly/3){
-                player.weight -= 30;
-                player.velocity[0] = 0;
-                player.stun = false;
-            }
+        
+        if(body.stunFrames > 0 && body.dirOfHit == false){
+            body.velocity[1] = -fly * dt;
+            body.velocity[0] = fly * dt;
+            body.stunFrames -= dt * 10000/60;
         }
-        }    
+        else if(body.stunFrames > 0 && body.dirOfHit == true){
+            body.velocity[1] = -fly * dt;
+            body.velocity[0] -= fly * dt;
+            body.stunFrames -= dt * 10000/60;
+        }
+        /*
+        if (body.stunFrames > 0)
+            console.log(body.stunFrames);
+        */
+    }    
 window.getHit = {
     sideJab: sideJab
 };
