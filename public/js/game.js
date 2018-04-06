@@ -23,21 +23,39 @@ document.body.appendChild(canvas);
 // The main game loop
 var lastTime;
 function main() {
+    
+    //document.getElementById('begin-game-overlay').style.display = 'none';
     var now = Date.now();
     var dt = (now - lastTime) / 1000.0;
-
-    update(dt);
-    render();
-
+    if(dt == 0){beforeGame = true;}
+    if(beforeGame){
+        menu();
+    }
+    else{
+        update(dt);
+        render();
+    }
     lastTime = now;
     requestAnimFrame(main);
 };
 
+function menu() {
+            document.getElementById('begin-game-overlay').style.display = 'block';
+            document.getElementById('begin-game').style.display = 'block';
+            document.getElementById('start-game').addEventListener('click', function() {
+               closeMenu(); 
+            });
+}
+function closeMenu(){
+        document.getElementById('begin-game').style.display = 'none';
+        document.getElementById('begin-game-overlay').style.display = 'none';
+        beforeGame = false;
+}
 function init() {
     document.getElementById('play-again').addEventListener('click', function() {
         reset();
     });
-    reset();
+    //reset();
     lastTime = Date.now();
     main();
 }
@@ -112,6 +130,7 @@ passThroughPlatforms[2] = plat4;
 
 var gameTime = 0;
 var isGameOver;
+var beforeGame;
 var gravity = .1; 
 
 
@@ -214,10 +233,10 @@ function reset() {
     document.getElementById('game-over-overlay').style.display = 'none';
     isGameOver = false;
     gameTime = 0;
-    
     clouds = [];
     player.pos = [canvas.width/2 -160, canvas.height/2-40];
     otherBody.pos = [canvas.width/2 +110, canvas.height/2-40];
     otherBody.weight = 100;
+    //begin();
 };
 

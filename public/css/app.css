@@ -25,8 +25,10 @@ canvas {
     right: 0;
 }
 
-#game-over, #game-over-overlay {
-    margin: auto;
+#game-over, #game-over-overlay, #begin-game-overlay, #begin-game {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top:10%;
     width: 800px;
     height: 450px;
     position: absolute;
@@ -37,7 +39,6 @@ canvas {
     z-index: 1;
     display: none;
 }
-
 #game-over-overlay {
     background-color: black;
     opacity: .5;
@@ -49,12 +50,57 @@ canvas {
     color: white;
 }
 
-#game-over h1 {
+#game-over, #begin-game h1 {
     font-size: 3em;
     font-family: sans-serif;
 }
 
-#game-over button {
+#game-over, #begin-game button {
     font-size: 1.5em;
+    
 }
 
+
+#begin-game-overlay {
+    background-color: white;
+}
+
+
+#begin-game {
+    height: 200px;
+    text-align: center;
+    color: black;
+}
+
+
+
+.container{
+    text-align: left;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+}
+
+.bar {
+    width: 400px;
+    height: 10%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: solid;
+    border-color: #151515;
+}
+
+.skills {
+    text-align: right;
+    padding-right: 5px;
+    line-height: 100%;
+    color: black;
+}
+
+.strength {width: 20%; background-color: #4CAF50;}
+.speed {width: 20%; background-color: #2196F3;}
+.weight {width: 20%; background-color: #f44336;}
