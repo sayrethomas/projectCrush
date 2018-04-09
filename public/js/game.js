@@ -124,7 +124,14 @@ var gravity = .1;
     
     handleInput.inputs(dt);
     handleInput.dummyInputs(dt);
+    for (var i =0;i<bodies.length;i++){
+        //Being hit
+        bodies[i].bodyHitProcess(dt);
+        //Attack process
+        bodies[i].bodyAtkProcess(bodies[i].atkType,attacks,dt)
+    }
     collisions.checkCollisions(dt);
+    
     updateEntities(dt);
     
     if(Math.random() < 0.005) {
@@ -139,12 +146,19 @@ var gravity = .1;
 function updateEntities(dt) {
     // Update player bodies
     for (var i =0;i<bodies.length;i++){
+        //Sprite
         bodies[i].sprite.update(dt);
+        //Position
         bodies[i].pos[0] += bodies[i].velocity[0];
         bodies[i].pos[1] += bodies[i].velocity[1];
+        //Rectangle
         bodies[i].rect = [bodies[i].pos[0],bodies[i].pos[1],bodies[i].sprite.size[0],bodies[i].sprite.size[1]];
-        bodies[i].bodyHitProcess(dt);
+        //Being hit
+        //bodies[i].bodyHitProcess(dt);
+        //Attack process
+        //bodies[i].bodyAtkProcess(bodies[i].atkType,dt)
     }
+    
     plat1.sprite.update(dt);
     plat2.sprite.update(dt);
     plat3.sprite.update(dt);
@@ -164,8 +178,9 @@ function updateEntities(dt) {
     
     //Update Attacks
     for (i=0;i<attacks.length;i++){
-        attacks[i].atkUpdate();
+        attacks[i].atkUpdate(dt);
         attacks[i].pos[0] += attacks[i].velocity[0];
+        console.log(attacks[i].pos[0]);
         attacks[i].pos[1] += attacks[i].velocity[1];
         attacks[i].rect = [attacks[i].pos[0],attacks[i].pos[1],attacks[i].sprite.size[0],attacks[i].sprite.size[1]];
         if (attacks[i].atkTime <= 0){

@@ -15,14 +15,19 @@
             this.maxWalkSpeed = 200*this.speed/this.weight;
             this.jumpMaxSpeed = 200*this.strength/this.weight;
             this.attackPower = 100*this.strength/this.speed;;
+            
             this.jump = false;
             this.hasJumps = 3;
+            
             this.standing = false;
             this.onPassThorugh = false;
             this.dropThrough = false;
             
             this.jumpAccel = 16;
             this.zAtkReady = true;
+            this.atkType = "none";
+            this.atkFrames = 0;
+            
             this.dir = true;
             this.stun = false;
             this.stunFrames = 0;
@@ -41,8 +46,87 @@
             this.atkName = name;
             this.atkOrig = origin;
         },
-        atkUpdate: function(){
+        atkUpdate: function(dt){
+            if (this.atkName == "sexKick"){
+               this.pos[0] = bodies[this.owner].pos[0];
+               this.pos[1] = bodies[this.owner].pos[1] + 25;
+               if (bodies[this.owner].standing == true){
+                   this.atkTime = 1;
+               }
+            }
             this.atkTime--;
+        },
+        bodyAtkStart:function(type,atkArray){
+            if (type == "jab" || type == "upJab" || type == "downJab"){
+                //Body variables
+                this.atkType = type;
+                this.atkFrames = 6;
+                this.zAtkReady = false;
+            }
+            else if (type == "sexKick"){
+                this.atkType = type;
+                this.atkFrames = 50;
+                this.zAtkReady = false;
+            }
+        },
+        bodyAtkProcess:function(type,atkArray,dt){
+            if (this.atkFrames > 0){
+                if (type == "jab" || type == "upJab" || type == "downJab"){
+                    if (this.atkFrames == 5){
+                        
+                        var atkXSpd = 15;
+                        var atkX = this.pos[0] + (19 * !this.dir);
+                        atkXSpd = atkXSpd - (atkXSpd * 2* this.dir);
+                        if (atkXSpd < 0){
+                            var sprPos = [0,0];
+                        } else{
+                            var sprPos = [19,0];
+                        }
+                        
+                        var atkYSpd = 0;
+                        if (type == "upJab")
+                            atkYSpd = -10;
+                        else if (type == "downJab")
+                            atkYSpd = 10;
+                        
+                        var atkY = this.pos[1] + 20;
+                        var atkRect = [atkX,atkY,19,17];
+                        var shotSprite = new Sprite('img/testShot.png', sprPos, [19, 15], 1, [0]);//new Sprite("img/testShot.png",[0,0],[19,17],1,[0]);
+                        var shotPiece = new GamePiece("attack",shotSprite,atkRect,[atkX,atkY]);
+                        shotPiece.atkSet(0,6,[atkXSpd,atkYSpd],"jab", this.pos[0]);
+                        atkArray[length] = shotPiece;
+                    }
+                    
+                    var xDirFactor = 1 - 2* this.dir;
+                    this.velocity[0] = 0;//xDirFactor * 50 * dt;
+                    if (this.velocity[1] < -1 * dt)
+                        this.velocity[1] = -1 * dt;
+                    
+                }
+                else if (type =="sexKick"){
+                    if (this.atkFrames == 48){
+                        var atkXSpd = 15;
+                        var atkX = this.pos[0];// + (19 * !this.dir);
+                        var sprPos = [0,0];
+                        /*
+                        atkXSpd = atkXSpd - (atkXSpd * 2* this.dir);
+                        if (atkXSpd < 0){
+                            var sprPos = [0,0];
+                        } else{
+                            var sprPos = [19,0];
+                        }
+                        */
+                        var atkY = this.pos[1] + 20;
+                        var atkRect = [atkX,atkY,19,17];
+                        var shotSprite = new Sprite('img/testShot.png', sprPos, [19, 15], 1, [0]);//new Sprite("img/testShot.png",[0,0],[19,17],1,[0]);
+                        var shotPiece = new GamePiece("attack",shotSprite,atkRect,[atkX,atkY]);
+                        shotPiece.atkSet(0,this.atkFrames,[0,0],"sexKick", this.pos[0]);
+                        atkArray[length] = shotPiece;
+                    }
+                }
+                this.atkFrames--;
+            } else
+                this.atkType = "none";
         },
         bodyHitProcess: function(dt){
             getHit.sideJab(this, dt);

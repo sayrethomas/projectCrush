@@ -42,12 +42,8 @@
             
             
             if (player.velocity[0] > player.maxWalkSpeed * dt){
-                console.log("Max is: " + player.maxWalkSpeed * dt)
-                console.log("equaled from " + player.velocity[0]);
                 player.velocity[0] = player.maxWalkSpeed * dt;
             }else if (player.velocity[0] > 0){
-                console.log("Max is: " + player.maxWalkSpeed * dt)
-                console.log("reduced from " + player.velocity[0]);
                 player.velocity[0] += player.accel * dt;
             }
         }
@@ -85,27 +81,19 @@
     }  
     
     //Attacking
-    if (input.isDown('Z')){
-        var jabExists  = attackExists("jab");//attacks.findIndex(checkAtkArray,"jab");
-        //console.log(jabExists);
-        if (player.zAtkReady && !jabExists){
-            var atkXSpd = 15;
-            var atkX = player.pos[0] + (19 * !player.dir);
-            atkXSpd = atkXSpd - (atkXSpd * 2* player.dir);
-            if (atkXSpd < 0){
-                var sprPos = [0,0];
-            } else{
-                var sprPos = [19,0];
-            }
-            var atkY = player.pos[1] + 20;
-            var atkRect = [atkX,atkY,19,17];
-            var shotSprite = new Sprite('img/testShot.png', sprPos, [19, 15], 1, [0]);//new Sprite("img/testShot.png",[0,0],[19,17],1,[0]);
-            var shotPiece = new GamePiece("attack",shotSprite,atkRect,[atkX,atkY]);
-            shotPiece.atkSet(0,6,[atkXSpd,0],"jab", player.pos[0]);
-            attacks[length] = shotPiece;
-            player.zAtkReady = false;
+    if (input.isDown('Z') && player.atkType == "none"){
+        if (player.zAtkReady){
+            if (player.standing)
+                if (input.isDown("DOWN"))
+                    player.bodyAtkStart("downJab",attacks);
+                else if (input.isDown("UP"))
+                    player.bodyAtkStart("upJab",attacks);
+                else
+                    player.bodyAtkStart("jab",attacks);
+            else
+                player.bodyAtkStart("sexKick",attacks);
         }
-    } else
+    } else if (!input.isDown("Z"))
         player.zAtkReady = true;
     }
 window.handleInput = {
