@@ -27,9 +27,11 @@ function main() {
     //document.getElementById('begin-game-overlay').style.display = 'none';
     var now = Date.now();
     var dt = (now - lastTime) / 1000.0;
-    if(dt == 0){beforeGame = true;}
+    //if(dt == 0){beforeGame = true;}
     if(beforeGame){
         menu();
+        update(dt);
+        render();
     }
     else{
         update(dt);
@@ -130,7 +132,7 @@ passThroughPlatforms[2] = plat4;
 
 var gameTime = 0;
 var isGameOver;
-var beforeGame;
+var beforeGame = true;
 var gravity = .1; 
 
 
