@@ -56,22 +56,21 @@ resources.onReady(init);
 var player = new GamePiece("player",
     new Sprite('img/charHair2.png', [0, 0], [40, 40], 7, [0, 1]),
     [],
-    [canvas.width/2 -40, 200], 200, 14
+    [canvas.width/2 -130, canvas.height/2-40]
 );
 
 
 var otherBody = new GamePiece("player",
     new Sprite('img/charHair2.png', [0, 0], [40, 40], 7, [0, 1]),
     [],
-    [canvas.width/2 -40, 200]
+    [canvas.width/2 +110, canvas.height/2-40]
 );
 
 var bodies = [];
 bodies[0] = player;
 bodies[1] = otherBody;
 
-bodies[1].pos[0] += 135;
-bodies[1].pos[1] -= 20;
+
 
 
 
@@ -89,14 +88,14 @@ var plat1 = new GamePiece("platform",
 );
 
 var plat2 = new GamePiece("platform",
-    new Sprite('img/hourglass.png', [0, 0], [80, 60], 3, [0,1,2,3,4,5,6,7,8,9,10]),
+    new Sprite('img/hourglass.png', [0, 0], [80, 60], 5, [0,1,2,3,4,5,6,7,8,9,10]),
     [230,240,60,1],
-    [220, 240]
+    [220, 240],
 );
 
 
 var plat3 = new GamePiece("platform",
-    new Sprite('img/hourglass.png', [0, 0], [80, 60], 3, [5,6,7,8,9,10,0,1,2,3,4]),
+    new Sprite('img/hourglass.png', [0, 0], [80, 60], 5, [5,6,7,8,9,10,0,1,2,3,4]),
     [510,240,60,1],
     [500,240]
 );
@@ -116,22 +115,34 @@ passThroughPlatforms[2] = plat4;
 var gameTime = 0;
 var isGameOver;
 var gravity = .1; 
-//var dir = true;
+
 
 // Update game objects
-function update(dt) {
-    var rand = Math.random()*canvas.height-100;
+ function update(dt) {
     gameTime += dt;
 
-    handleInput(dt);
-    //console.log("input done");
-    checkCollisions(dt);
-    //console.log("collision done");
+    var printInfo = false;
+    if (player.velocity[0] != 0)
+        printInfo = true;
+    
+    handleInput.inputs(dt);
+    handleInput.dummyInputs(dt);
+    for (var i =0;i<bodies.length;i++){
+        //Being hit
+        bodies[i].bodyHitProcess(dt);
+        //Attack process
+        bodies[i].bodyAtkProcess(bodies[i].atkType,attacks,dt)
+    }
+    collisions.checkCollisions(dt);
+    
+
     updateEntities(dt);
     //console.log("update done");
     
 
+
     if(Math.random() < 0.002) {
+
         clouds.push({
             pos: [-60, Math.random()*canvas.height-100],
             sprite: new Sprite('img/clouds.png', [0, 0], [51, 26], 2, [0,1,2])
@@ -140,163 +151,21 @@ function update(dt) {
 
 };
 
-function handleInput(dt) {
-    if (!player.attacking){
-        if(input.isDown('LEFT') || input.isDown('a')) {
-            if (player.velocity[0] > -player.maxWalkSpeed * dt){
-                player.velocity[0] -= player.accel * dt;
-
-                if (player.velocity[0] < -player.maxWalkSpeed * dt){
-                    player.velocity[0] = -player.maxWalkSpeed * dt;
-                }else if (player.velocity[0] < 0){
-                    player.velocity[0] -= player.accel * dt;
-                }
-            }
-
-            if(player.standing){player.sprite.frames = [4,5];}
-            else{player.sprite.frames = [9];}
-            player.dir = true;
-        }else if(input.isDown('RIGHT') || input.isDown('d')) {
-            if (player.velocity[0] < player.maxWalkSpeed * dt){
-                player.velocity[0] += player.accel * dt;
-
-                if (player.velocity[0] > player.maxWalkSpeed * dt){
-                    player.velocity[0] = player.maxWalkSpeed * dt;
-                }else if (player.velocity[0] > 0){
-                    player.velocity[0] += player.accel * dt;
-                }
-            }
-
-            if(player.standing){player.sprite.frames = [6,7];}
-            else{player.sprite.frames = [8];}
-            player.dir = false;
-        }else{
-            player.velocity[0] -= Math.sign(player.velocity[0]) * player.accel * dt * 2;
-            if (Math.abs(player.velocity[0]) < player.accel * dt){
-                player.velocity[0] = 0;
-            }
-
-            if(player.dir){player.sprite.frames = [0,1];}
-            else{player.sprite.frames = [2,3];}
-        }
-        if(input.isDown('SPACE')){
-           if (!player.jump && player.hasJumps > 0){
-                player.velocity[1] = -player.jumpMaxSpeed * dt;
-                player.hasJumps--;
-                player.jump = true;  
-            }
-
-            if(player.dir){player.sprite.frames = [9];}
-            else{player.sprite.frames =  [8];}
-        }
-        else{
-            player.jump = false;
-            if(input.isDown('DOWN') || input.isDown('s')) {
-                player.velocity[1] = player.jumpMaxSpeed * dt;
-                player.dropThrough = true;
-                //console.log("PING");
-            } else{
-                player.dropThrough = false;
-            }
-        }
-    }
-    
-    player.attacking = false;
-    var alreadyAttacking = attackExists("jab") && attackExists("uppercut");
-    if (alreadyAttacking){
-        player.attacking = true;
-    }
-    if (input.isDown('Z')){
-        //Uppercut
-        if (input.isDown('UP') && player.hasJumps){
-            //This is reusable
-            var atkXOffset = player.sprite.size[0]/2;
-            var atkX = player.pos[0] + (atkXOffset * !player.dir);
-            var atkY = player.pos[1] + 20;
-            
-            var atkXSpd = 2;
-            var atkYSpd = 10;
-            atkXSpd = atkXSpd - (atkXSpd * 2 * player.dir); 
-            //This is reusable
-            if (atkXSpd < 0){
-                var sprPos = [0,0];
-            } else{
-                var sprPos = [atkXOffset,0];
-            }
-            
-            var atkRect = [atkX,atkY,19,15];
-            var shotSprite = new Sprite('img/testShot.png', sprPos, [atkRect[2], atkRect[3]], 1, [0]);
-            
-            var shotPiece = new GamePiece("attack",shotSprite,atkRect,[atkX,atkY]);
-            
-            shotPiece.atkSet(0,6,[atkXSpd,atkYSpd],"jab");
-            
-            //This is reusable
-            attacks[length] = shotPiece;
-            player.zAtkReady = false;
-            
-            player.hasJumps--;
-            
-            //This is reusable
-            player.attacking = true;
-        }
-        //Jab
-        else if (player.zAtkReady && !alreadyAttacking){
-            //This is reusable
-            var atkXOffset = player.sprite.size[0]/2;
-            var atkX = player.pos[0] + (atkXOffset * !player.dir);
-            var atkY = player.pos[1] + 20;
-            
-            var atkXSpd = 10;
-            var atkYSpd = 0;
-            atkXSpd = atkXSpd - (atkXSpd * 2 * player.dir);
-            
-            //This is reusable
-            if (atkXSpd < 0){
-                var sprPos = [0,0];
-            } else{
-                var sprPos = [atkXOffset,0];
-            }
-            
-            var atkRect = [atkX,atkY,19,15];
-            var shotSprite = new Sprite('img/testShot.png', sprPos, [atkRect[2], atkRect[3]], 1, [0]);
-            var shotPiece = new GamePiece("attack",shotSprite,atkRect,[atkX,atkY]);
-            shotPiece.atkSet(0,6,[atkXSpd,atkYSpd],"jab");
-            
-            //This is reusable
-            attacks[length] = shotPiece;
-            player.zAtkReady = false;
-            
-            if (player.standing){
-                player.velocity[0] = 0;
-            }
-            
-            //This is reusable
-            player.attacking = true;
-        } 
-    } else
-        player.zAtkReady = true;
-    
-}
-
-function attackExists(name){
-    var ret = false;
-    for(var i = 0;i<attacks.length;i++){
-        if (attacks[i].atkName == name)
-            ret = true;
-            //console.log("PING");
-    }
-    //console.log("Out of attack exists");
-    return ret;
-}
 
 function updateEntities(dt) {
     // Update player bodies
     for (var i =0;i<bodies.length;i++){
+        //Sprite
         bodies[i].sprite.update(dt);
+        //Position
         bodies[i].pos[0] += bodies[i].velocity[0];
         bodies[i].pos[1] += bodies[i].velocity[1];
+        //Rectangle
         bodies[i].rect = [bodies[i].pos[0],bodies[i].pos[1],bodies[i].sprite.size[0],bodies[i].sprite.size[1]];
+        //Being hit
+        //bodies[i].bodyHitProcess(dt);
+        //Attack process
+        //bodies[i].bodyAtkProcess(bodies[i].atkType,dt)
     }
     
     plat1.sprite.update(dt);
@@ -310,7 +179,7 @@ function updateEntities(dt) {
 
         // Remove if offscreen
         if(clouds[i].pos[0] > canvas.width) {
-            clouds.splice(i,1);
+            clouds.splice(i, 1);
             i--;
         }
     }
@@ -318,8 +187,9 @@ function updateEntities(dt) {
     
     //Update Attacks
     for (i=0;i<attacks.length;i++){
-        attacks[i].atkUpdate();
+        attacks[i].atkUpdate(dt);
         attacks[i].pos[0] += attacks[i].velocity[0];
+        console.log(attacks[i].pos[0]);
         attacks[i].pos[1] += attacks[i].velocity[1];
         attacks[i].rect = [attacks[i].pos[0],attacks[i].pos[1],attacks[i].sprite.size[0],attacks[i].sprite.size[1]];
         if (attacks[i].atkTime <= 0){
@@ -331,180 +201,7 @@ function updateEntities(dt) {
     
 }
 
-// Collisions
-function checkCollisions(dt) {
-    //Bodies touch platforms
-    for (var i = 0;i<bodies.length;i++){
-        bodies[i].standing = false;
-        checkPlayerBounds();
-        //console.log("player bounds done");
-        bodies[i].standing = checkPlatformCollisions(dt,bodies,i);
-        //console.log("platform done");
-        checkPassthroughPlatformCollisions(dt,bodies,i);
-        //console.log("passthrough done");
-        checkAttackCollisions(dt, bodies,i);
-        //console.log("attack done");
-        
-    }
-    
-}
 
-function checkPlatformCollisions(dt,bodies,q){
-    var predictRect = [];
-       
-    var playRect = [];
-    bodies[q].standing = false;
-    
-    
-    for(i=0;i<platforms.length;i++){
-        playRect = [bodies[q].pos[0],bodies[q].pos[1]
-        ,bodies[q].sprite.size[0],bodies[q].sprite.size[1]];
-        var xSign = Math.sign(bodies[q].velocity[0]) * .5 * dt;
-        var ySign = Math.sign(bodies[q].velocity[1]) * .5 * dt;
-        var platRect = platforms[i].rect;
-        
-        predictRect = playRect;
-        predictRect[0] += bodies[q].velocity[0];
-        
-        if (checkRectCollision(predictRect,platRect)){
-            predictRect = playRect;
-            predictRect[0] += xSign;
-            bodies[q].velocity[0] = 0;
-            while (!checkRectCollision(predictRect,platRect)){
-                bodies[q].pos[0] += xSign;
-                predictRect[0] += xSign;
-            }
-        }
-        
-        playRect = [bodies[q].pos[0],bodies[q].pos[1]
-        ,bodies[q].sprite.size[0],bodies[q].sprite.size[1]];
-        predictRect = playRect;
-        predictRect[1] += bodies[q].velocity[1];
-        if (checkRectCollision(predictRect,platRect)){
-            predictRect = playRect;
-            predictRect[1] += ySign;
-            bodies[q].velocity[1] = 0;
-            while (!checkRectCollision(predictRect,platRect)){
-                bodies[q].pos[1] += ySign;
-                predictRect[1] += ySign;
-            }
-        }
-        predictRect = playRect;
-        predictRect[1] += 1;
-        if (checkRectCollision(predictRect,platRect)){
-            bodies[q].standing = true;
-            bodies[q].hasJumps = 3;
-        }
-    }
-    
-    if (!bodies[q].standing )
-        bodies[q].velocity[1] += gravity;
-    
-    return bodies[q].standing;
-}
-
-function checkPassthroughPlatformCollisions(dt,bodies,q){
-    var predictRect = [];
-       
-    var playRect = [];
-    
-    if (bodies[q].velocity[1] > 0){
-        for(i=0;i<passThroughPlatforms.length;i++){
-            
-            
-            playRect = [bodies[q].pos[0],bodies[q].pos[1]
-            ,bodies[q].sprite.size[0],bodies[q].sprite.size[1]];
-            var ySign = Math.sign(bodies[q].velocity[1]) * .5 * dt;
-            var platRect = passThroughPlatforms[i].rect;
-            
-            
-            if (!checkRectCollision(playRect,platRect)){
-                playRect = [bodies[q].pos[0],bodies[q].pos[1]
-                ,bodies[q].sprite.size[0],bodies[q].sprite.size[1]];
-                predictRect = playRect;
-                predictRect[1] += bodies[q].velocity[1];
-                
-                
-                if (checkRectCollision(predictRect,platRect)){
-                    predictRect = playRect;
-                    predictRect[1] += ySign;
-                    bodies[q].velocity[1] = 0;
-                    var yBump = 0;
-                    while (!checkRectCollision(predictRect,platRect)
-                    && yBump < 20){
-                        bodies[q].pos[1] += ySign;
-                        predictRect[1] += ySign;
-                    }
-                }
-
-                if (!bodies[q].standing){
-                    predictRect = playRect;
-                    predictRect[1] += 1;
-                    if (checkRectCollision(predictRect,platRect)){
-                        bodies[q].standing = true;
-                        bodies[q].hasJumps = 3;
-                        if (bodies[q].dropThrough){
-                            bodies[q].pos[1]++;
-                        }
-                    } 
-                }
-            }
-        }
-        
-        if (!bodies[q].standing )
-            bodies[q].velocity[1] += gravity;
-    }
-    return bodies[q].standing;
-}
-
-function checkAttackCollisions(dt,bodies,q){
-    for(var j = 0;j<attacks.length;j++){
-        var atk = attacks[j];
-        var aRect = atk.rect;
-        var bRect = bodies[q].rect;
-        if (checkRectCollision(aRect,bRect/*atk.rect,bodies[q].rect*/)){
-            if (q != atk.owner && attacks[j].atkActive){
-                bodies[q].bodyHitProcess(dt, atk);
-                attacks[j].atkActive = false;
-            }
-        }
-    }
-}
-
-function checkRectCollision(rect1, rect2){
-    var hit = true;
-    if (rect1[0] + rect1[2] < rect2[0] 
-    || rect1[0] > rect2[0] + rect2[2]
-    || rect1[1] + rect1[3] < rect2[1]
-    || rect1[1] > rect2[1] + rect2[3])
-        hit = false;
-    return hit;
-}
-
-function checkPlayerBounds() {
-    // Check bounds
-    var kill = false;
-    if(player.pos[0] < -150) {
-        player.pos[0] = 0;
-        kill = true;
-    }
-    else if(player.pos[0] > 150+canvas.width - player.sprite.size[0]) {
-        player.pos[0] = canvas.width - player.sprite.size[0];
-        kill = true;
-    }
-
-    if(player.pos[1] < -150) {
-        player.pos[1] = 0;
-        kill = true;
-    }
-    else if(player.pos[1] > 150+canvas.height - player.sprite.size[1]) {
-        player.pos[1] = canvas.height - player.sprite.size[1];
-        if (player.velocity[1] > 0)
-            player.velocity[1] = 0;
-        kill = true;
-    }
-    if (kill) gameOver();
-}
 var background = new Image();
 background.src = 'img/background.svg';
 
@@ -546,8 +243,10 @@ function reset() {
     document.getElementById('game-over-overlay').style.display = 'none';
     isGameOver = false;
     gameTime = 0;
-  
+    
     clouds = [];
-    player.pos = [canvas.width/2 -40, 200];
+    player.pos = [canvas.width/2 -160, canvas.height/2-40];
+    otherBody.pos = [canvas.width/2 +110, canvas.height/2-40];
+    otherBody.weight = 100;
 };
 
