@@ -58,8 +58,6 @@
             player.velocity[1] = -player.jumpMaxSpeed * dt;
             player.hasJumps--;
             player.jump = true;
-            console.log(player.strength);
-            console.log(player.jumpMaxSpeed);
         }
         if(player.dir){player.sprite.frames = [9];}
         else{player.sprite.frames =  [8];}

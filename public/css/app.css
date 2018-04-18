@@ -17,7 +17,6 @@ html, body {
 canvas {
     display: block;
     margin: auto;
-
     position: absolute;
     top: 0;
     bottom: 0;
@@ -25,10 +24,22 @@ canvas {
     right: 0;
 }
 
-#game-over, #game-over-overlay, #begin-game-overlay, #begin-game {
+#game-over, #game-over-overlay, #begin-game-overlay {
+    margin: auto;
+    width: 800px;
+    height: 450px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    display: none;
+}
+#begin-game{
     margin-left: auto;
     margin-right: auto;
-    margin-top:10%;
+    margin-top: 10%;
     width: 800px;
     height: 450px;
     position: absolute;
@@ -57,7 +68,7 @@ canvas {
 
 #game-over, #begin-game button {
     font-size: 1.5em;
-    
+
 }
 
 

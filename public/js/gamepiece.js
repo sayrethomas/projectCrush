@@ -12,9 +12,9 @@
             this.weight = 50;
             this.strength = 50;
             this.speed = 50;
-            this.maxWalkSpeed = 50*this.speed/this.weight;
-            this.jumpMaxSpeed = 50*this.strength/this.weight;
-            this.attackPower = 50*this.strength/this.speed;;
+            this.maxWalkSpeed = 50;
+            this.jumpMaxSpeed = 50;
+            this.attackPower = 50;
             this.jump = false;
             this.hasJumps = 3;
             this.standing = false;

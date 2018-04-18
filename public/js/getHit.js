@@ -3,26 +3,28 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+/* global player */
+
 (function() {
     
-    function sideJab(player, dt){
-        var fly = 300 - player.weight;
-        if(player.stun == true && player.dirOfHit == false){
-            player.velocity[1] = -fly * dt;
-            player.velocity[0] += fly/3 * dt;
-            if(player.pos[0] > player.placeOfHit+fly/3){
-                player.weight -= 30;
-                player.velocity[0] = 0;
-                player.stun = false;
+    function sideJab(play, dt){
+        var fly = play.weight+player.attackPower;
+        if(play.stun == true && play.dirOfHit == false){
+            play.velocity[1] = -fly/2 * dt;
+            play.velocity[0] += fly/4 * dt;
+            if(play.pos[0] > play.placeOfHit+fly/3){
+                play.weight += 30;
+                play.velocity[0] = 0;
+                play.stun = false;
             }
         }
-        else if(player.stun == true && player.dirOfHit == true){
-            player.velocity[1] = -fly * dt;
-            player.velocity[0] -= fly/3 * dt;
-            if(player.pos[0] < player.placeOfHit-fly/3){
-                player.weight -= 30;
-                player.velocity[0] = 0;
-                player.stun = false;
+        else if(play.stun == true && play.dirOfHit == true){
+            play.velocity[1] = -fly/2 * dt;
+            play.velocity[0] -= fly/4 * dt;
+            if(play.pos[0] < play.placeOfHit-fly/3){
+                play.weight += 30;
+                play.velocity[0] = 0;
+                play.stun = false;
             }
         }
         }    
