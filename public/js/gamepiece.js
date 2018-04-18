@@ -9,13 +9,12 @@
         this.sprite = sprite;
 
         if(type == "player"){
-            this.weight = 100;
-            this.strength = 100;
-            this.speed = 100;
-            this.maxWalkSpeed = 200*this.speed/this.weight;
-            this.jumpMaxSpeed = 200*this.strength/this.weight;
-            this.attackPower = 100*this.strength/this.speed;;
-            
+            this.weight = 50;
+            this.strength = 50;
+            this.speed = 50;
+            this.maxWalkSpeed = 50;
+            this.jumpMaxSpeed = 50;
+            this.attackPower = 50;
             this.jump = false;
             this.hasJumps = 3;
             
@@ -45,6 +44,7 @@
             this.velocity = velocity;
             this.atkName = name;
             this.atkOrig = origin;
+            this.atkPower = this.attackPower;
         },
         atkUpdate: function(dt){
             if (this.atkName == "sexKick"){
