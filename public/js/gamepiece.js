@@ -46,6 +46,9 @@
             this.atkOrig = origin;
             this.atkPower = this.attackPower;
         },
+        setFrames: function(frameString){
+            this.sprite.frames = sFrames[frameString];
+        },
         atkUpdate: function(dt){
             if (this.atkName == "sexKick"){
                this.pos[0] = bodies[this.owner].pos[0];

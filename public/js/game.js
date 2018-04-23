@@ -53,6 +53,7 @@ function closeMenu(){
         document.getElementById('begin-game-overlay').style.display = 'none';
         beforeGame = false;
 }
+
 function init() {
     document.getElementById('play-again').addEventListener('click', function() {
         reset();
@@ -90,8 +91,16 @@ var bodies = [];
 bodies[0] = player;
 bodies[1] = otherBody;
 
+var sFrames = []
 
-
+sFrames["playRWalk"] = [6,7];
+sFrames["playLWalk"] = [4,5];
+sFrames["playRJump"] = [8];
+sFrames["playLJump"] = [9];
+sFrames["playRStand"] = [0,1];
+sFrames["playLStand"] = [2,3];
+sFrames["playLPunch"] = [10,11];
+sFrames["playRPunch"] = [12,13];
 
 
 otherBody.hitBy;

@@ -7,7 +7,6 @@
 
 (function() {
     
-//<<<<<<< HEAD
     function sideJab(body, dt){
         
         var fly = body.weight+body.attackPower;
@@ -21,29 +20,6 @@
             body.velocity[1] = -fly/2 * dt;
             body.velocity[0] += fly/4 * dt;
             body.stunFrames -= dt * 10000/60;
-/*
-=======
-    function sideJab(play, dt){
-        //var fly = play.weight+player.attackPower;
-        if(play.stun == true && play.dirOfHit == false){
-            //play.velocity[1] = -fly/2 * dt;
-            //play.velocity[0] += fly/4 * dt;
-            if(play.pos[0] > play.placeOfHit+fly/3){
-                //play.weight += 30;
-                play.velocity[0] = 0;
-                play.stun = false;
-            }
-        }
-        else if(play.stun == true && play.dirOfHit == true){
-            //play.velocity[1] = -fly/2 * dt;
-            //play.velocity[0] -= fly/4 * dt;
-            if(play.pos[0] < play.placeOfHit-fly/3){
-                play.weight += 30;
-                play.velocity[0] = 0;
-                play.stun = false;
-            }
->>>>>>> blockGame
-*/
         }
         else if(body.stunFrames > 0 && body.dirOfHit == true){
             body.velocity[1] = -fly/2 * dt;
