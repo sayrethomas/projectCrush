@@ -34,8 +34,10 @@ function main() {
         render();
     }
     else{
+        stats();
         update(dt);
         render();
+       
     }
     lastTime = now;
     requestAnimFrame(main);
@@ -47,6 +49,14 @@ function menu() {
             document.getElementById('start-game').addEventListener('click', function() {
                closeMenu(); 
             });
+}
+function stats() {
+    if(!isGameOver){
+    document.getElementById('game-stats').style.display = 'block';
+    document.getElementById('play-percentage').innerHTML = (((2050-otherBody.weight)/2000)*100)+"%";
+    }
+    else
+        document.getElementById('game-stats').style.display = 'none';
 }
 function closeMenu(){
         document.getElementById('begin-game').style.display = 'none';
@@ -69,20 +79,21 @@ resources.load([
     'img/hourglass.png',
     'img/chamber.png',
     'img/clouds.png',
-    'img/testShot.png'
+    'img/testShot.png',
+    'img/specToken.png'
 ]);
 resources.onReady(init);
 
 // Game state
 var player = new GamePiece("player",
-    new Sprite('img/charHair2.png', [0, 0], [40, 40], 7, [0, 1]),
+    new Sprite('img/charHair2.png', [0, 0], [40, 40], 3, [0, 1]),
     [],
     [canvas.width/2 -130, canvas.height/2-40]
 );
 
 
 var otherBody = new GamePiece("player",
-    new Sprite('img/charHair2.png', [0, 0], [40, 40], 7, [0, 1]),
+    new Sprite('img/charHair2.png', [0, 0], [40, 40], 3, [0, 1]),
     [],
     [canvas.width/2 +110, canvas.height/2-40]
 );
@@ -101,10 +112,18 @@ sFrames["playRStand"] = [0,1];
 sFrames["playLStand"] = [2,3];
 sFrames["playLPunch"] = [10,11];
 sFrames["playRPunch"] = [12,13];
+sFrames["strToken"] = [0,1,2];
+sFrames["spdToken"] = [3,4,5];
+sFrames["wgtToken"] = [6,7,8];
+sFrames["strwgtToken"] = [9,10,11];
+sFrames["spdwgtToken"] = [12,13,14];
+sFrames["strspdToken"] = [15,16,17];
+sFrames["strspdwgtToken"] = [18,19,20];
 
 
 otherBody.hitBy;
 
+var spec = [];
 var platforms = [];
 var passThroughPlatforms = [];
 var clouds = [];
@@ -135,7 +154,43 @@ var plat4 = new GamePiece("platform",
     [335, 112]
 );
 
+var spec1 = new GamePiece("spec",
+    new Sprite('img/specToken.png', [0, 0], [100, 150], 6, [0,1,2]),
+    [],
+    [5, 315]
+);
+function speccer(){
+    if(player.strength > player.weight && player.strength > player.speed){
+    spec1.setFrames("strToken");
+    }
+    else if(player.weight > player.speed && player.weight > player.strength){
+        spec1.setFrames("wgtToken");
+    }
+    else if(player.speed > player.weight && player.speed > player.strength){
+        spec1.setFrames("spdToken");
+    }
+    else if (player.speed === player.weight && player.weight === player.strength) {
+        spec1.setFrames("strspdwgtToken");
+    }
+    else if(player.strength === player.speed){
+        spec1.setFrames("strspdToken");
+    }
+    else if(player.strength === player.weight){
+        spec1.setFrames("strwgtToken");
+    }
+    else if(player.speed === player.weight){
+        spec1.setFrames("spdwgtToken");
+    }
+    
+    else{
+        spec1.setFrames("strspdwgtToken");
+    }
+    
+ 
 
+}
+
+spec[0] = spec1;
 platforms[0] = plat1;
 passThroughPlatforms[0] = plat2;
 passThroughPlatforms[1] = plat3;
@@ -201,6 +256,8 @@ function updateEntities(dt) {
     plat2.sprite.update(dt);
     plat3.sprite.update(dt);
     plat4.sprite.update(dt);
+    speccer();
+    spec1.sprite.update(dt);
     //Update Clouds
     for(var i=0; i<clouds.length; i++) {
         clouds[i].pos[0] += 100*dt;
@@ -240,6 +297,7 @@ function render() {
     renderEntities(platforms);
     renderEntities(passThroughPlatforms);
     renderEntities(attacks);
+    renderEntities(spec);
     
     if(!isGameOver){
         renderEntities(bodies);
@@ -274,7 +332,7 @@ function reset() {
     clouds = [];
     player.pos = [canvas.width/2 -160, canvas.height/2-40];
     otherBody.pos = [canvas.width/2 +110, canvas.height/2-40];
-    otherBody.weight = 100;
+    otherBody.weight = 50;
     //begin();
 };
 

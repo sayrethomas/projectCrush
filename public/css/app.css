@@ -36,6 +36,18 @@ canvas {
     z-index: 1;
     display: none;
 }
+#game-stats{
+    position: absolute;
+    top: 510px;
+    right: 380px;
+    color: white;
+    text-align: right;
+    z-index: 1;
+    display: none;
+}
+#play-percentage{
+    font-size: 2em;
+}
 #begin-game{
     margin-left: auto;
     margin-right: auto;
@@ -112,6 +124,40 @@ canvas {
     color: black;
 }
 
-.strength {width: 20%; background-color: #4CAF50;}
-.speed {width: 20%; background-color: #2196F3;}
-.weight {width: 20%; background-color: #f44336;}
+.strength {width: 20%; background-color: red;}
+.speed {width: 20%; background-color: yellow;}
+.weight {width: 20%; background-color: blue;}
+
+
+#countdown {
+  position: absolute;
+  top: 49%;
+  right: 79.87%;
+  height: 78px;
+  width: 80px;
+  text-align: center;
+  z-index: 1;
+}
+
+svg {
+  transform: rotateY(-180deg) rotateZ(-90deg);
+}
+
+svg circle {
+  stroke-dasharray: 220px;
+  stroke-dashoffset: 0px;
+  stroke-linecap: round;
+  stroke-width: 4px;
+  stroke: #58B947;
+  fill: none;
+  animation: countdown 30s linear infinite forwards;
+}
+
+@keyframes countdown {
+  from {
+    stroke-dashoffset: 0px;
+  }
+  to {
+    stroke-dashoffset: 220px;
+  }
+}

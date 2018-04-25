@@ -94,8 +94,11 @@
                     player.bodyAtkStart("downJab",attacks);
                 else if (input.isDown("UP"))
                     player.bodyAtkStart("upJab",attacks);
-                else
+                else{
                     player.bodyAtkStart("jab",attacks);
+                    if(player.dir){player.setFrames("playLJab");}
+                    else{player.setFrames("playRJab");}
+                }
             else
                 player.bodyAtkStart("sexKick",attacks);
         }
