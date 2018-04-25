@@ -53,6 +53,7 @@ function menu() {
 function stats() {
     if(!isGameOver){
     document.getElementById('game-stats').style.display = 'block';
+    document.getElementById('countdown').style.display = 'block';
     document.getElementById('play-percentage').innerHTML = (((2050-otherBody.weight)/2000)*100)+"%";
     }
     else

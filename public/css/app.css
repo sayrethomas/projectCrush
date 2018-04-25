@@ -137,6 +137,7 @@ canvas {
   width: 80px;
   text-align: center;
   z-index: 1;
+  display: none;
 }
 
 svg {
