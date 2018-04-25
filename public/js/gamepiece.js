@@ -46,8 +46,13 @@
             this.atkOrig = origin;
             this.atkPower = this.attackPower;
         },
-        setFrames: function(frameString){
-            this.sprite.frames = sFrames[frameString];
+        setFrames: function(frameString,index){
+            if (index === undefined){
+                this.sprite.frames = sFrames[frameString];
+            } else{
+                this.sprite.frames = [sFrames[frameString][index]];
+                console.log("Frame ", sFrames[frameString][index]);
+            }
         },
         atkUpdate: function(dt){
             if (this.atkName == "sexKick"){
@@ -75,8 +80,18 @@
         bodyAtkProcess:function(type,atkArray,dt){
             if (this.atkFrames > 0){
                 if (type == "jab" || type == "upJab" || type == "downJab"){
+                    var sString;
+                    if (this.dir)
+                        sString = "playLPunch";
+                    else
+                        sString = "playRPunch";
+                    
+                    if (this.atkFrames < 5)
+                        this.setFrames(sString,0);
+                    else
+                        this.setFrames(sString,1);
+                    
                     if (this.atkFrames == 5){
-                        
                         var atkXSpd = 15;
                         var atkX = this.pos[0] + (19 * !this.dir);
                         atkXSpd = atkXSpd - (atkXSpd * 2* this.dir);

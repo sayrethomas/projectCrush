@@ -91,7 +91,7 @@ var bodies = [];
 bodies[0] = player;
 bodies[1] = otherBody;
 
-var sFrames = []
+var sFrames = [];
 
 sFrames["playRWalk"] = [6,7];
 sFrames["playLWalk"] = [4,5];
@@ -167,7 +167,6 @@ var gravity = .1;
     
 
     updateEntities(dt);
-    //console.log("update done");
     
 
 
@@ -219,7 +218,6 @@ function updateEntities(dt) {
     for (i=0;i<attacks.length;i++){
         attacks[i].atkUpdate(dt);
         attacks[i].pos[0] += attacks[i].velocity[0];
-        console.log(attacks[i].pos[0]);
         attacks[i].pos[1] += attacks[i].velocity[1];
         attacks[i].rect = [attacks[i].pos[0],attacks[i].pos[1],attacks[i].sprite.size[0],attacks[i].sprite.size[1]];
         if (attacks[i].atkTime <= 0){

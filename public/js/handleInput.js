@@ -78,7 +78,8 @@
     else{
         player.jump = false;
         if(input.isDown('DOWN') || input.isDown('s')) {
-            player.velocity[1] = player.jumpMaxSpeed * dt;
+            if (player.velocity[1] < player.jumpMaxSpeed * dt)
+                player.velocity[1] = player.jumpMaxSpeed * dt;
             player.dropThrough = true;
         } else{
             player.dropThrough = false;
