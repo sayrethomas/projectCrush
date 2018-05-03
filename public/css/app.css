@@ -45,6 +45,14 @@ canvas {
     z-index: 1;
     display: none;
 }
+#stats{
+    position: absolute;
+    top: 20px;
+    right: 100px;
+    color: black;
+    text-align: right;
+    z-index: 1;
+}
 #play-percentage{
     font-size: 2em;
 }

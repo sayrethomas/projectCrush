@@ -102,6 +102,7 @@
             else
                 player.bodyAtkStart("sexKick",attacks);
         }
+        console.log(otherBody.weight);
     } else if (!input.isDown("Z"))
         player.zAtkReady = true;
     }

@@ -46,14 +46,34 @@ function main() {
 function menu() {
             document.getElementById('begin-game-overlay').style.display = 'block';
             document.getElementById('begin-game').style.display = 'block';
+            document.getElementById('set-player1').addEventListener('click', function() { 
+                $('.player').html("Player 1");
+                $('.str2').html("Str: " +player.strength);
+                $('.spd2').html("Spd: " +player.speed);
+                $('.wgt2').html("Wgt: " +player.weight);
+                menu2.construct(player);
+                player1 = true;
+                player2 = false;
+                speccer(player, spec1);
+            });
+            document.getElementById('set-player2').addEventListener('click', function() { 
+                $('.player').html("Player 2");
+                $('.str2').html("Str: " +otherBody.strength);
+                $('.spd2').html("Spd: " +otherBody.speed);
+                $('.wgt2').html("Wgt: " +otherBody.weight);
+                menu2.construct(otherBody);
+                player2 = true;
+                player1 = false;
+                speccer(otherBody, spec2);
+            });
             document.getElementById('start-game').addEventListener('click', function() {
                closeMenu(); 
             });
 }
 function stats() {
     if(!isGameOver){
-    document.getElementById('game-stats').style.display = 'block';
-    document.getElementById('countdown').style.display = 'block';
+    //document.getElementById('game-stats').style.display = 'block';
+    //document.getElementById('countdown').style.display = 'block';
     document.getElementById('play-percentage').innerHTML = (((2050-otherBody.weight)/2000)*100)+"%";
     }
     else
@@ -76,6 +96,7 @@ function init() {
 
 resources.load([
     'img/charHair2.png',
+    'img/charHair.png',
     'img/hyberbolic.png',
     'img/hourglass.png',
     'img/chamber.png',
@@ -94,7 +115,7 @@ var player = new GamePiece("player",
 
 
 var otherBody = new GamePiece("player",
-    new Sprite('img/charHair2.png', [0, 0], [40, 40], 3, [0, 1]),
+    new Sprite('img/charHair.png', [0, 0], [40, 40], 3, [0, 1]),
     [],
     [canvas.width/2 +110, canvas.height/2-40]
 );
@@ -160,31 +181,36 @@ var spec1 = new GamePiece("spec",
     [],
     [5, 315]
 );
-function speccer(){
-    if(player.strength > player.weight && player.strength > player.speed){
-    spec1.setFrames("strToken");
+var spec2 = new GamePiece("spec",
+    new Sprite('img/specToken.png', [0, 0], [100, 150], 6, [0,1,2]),
+    [],
+    [700, 315]
+);
+function speccer(play, spec){
+    if(play.strength > play.weight && play.strength > play.speed){
+        spec.setFrames("strToken");
     }
-    else if(player.weight > player.speed && player.weight > player.strength){
-        spec1.setFrames("wgtToken");
+    else if(play.weight > play.speed && play.weight > play.strength){
+        spec.setFrames("wgtToken");
     }
-    else if(player.speed > player.weight && player.speed > player.strength){
-        spec1.setFrames("spdToken");
+    else if(play.speed > play.weight && play.speed > play.strength){
+        spec.setFrames("spdToken");
     }
-    else if (player.speed === player.weight && player.weight === player.strength) {
-        spec1.setFrames("strspdwgtToken");
+    else if (play.speed === play.weight && play.weight === play.strength) {
+        spec.setFrames("strspdwgtToken");
     }
-    else if(player.strength === player.speed){
-        spec1.setFrames("strspdToken");
+    else if(play.strength === play.speed){
+        spec.setFrames("strspdToken");
     }
-    else if(player.strength === player.weight){
-        spec1.setFrames("strwgtToken");
+    else if(play.strength === play.weight){
+        spec.setFrames("strwgtToken");
     }
-    else if(player.speed === player.weight){
-        spec1.setFrames("spdwgtToken");
+    else if(play.speed === play.weight){
+        spec.setFrames("spdwgtToken");
     }
     
     else{
-        spec1.setFrames("strspdwgtToken");
+        spec.setFrames("strspdwgtToken");
     }
     
  
@@ -192,6 +218,7 @@ function speccer(){
 }
 
 spec[0] = spec1;
+spec[1] = spec2;
 platforms[0] = plat1;
 passThroughPlatforms[0] = plat2;
 passThroughPlatforms[1] = plat3;
@@ -200,6 +227,8 @@ passThroughPlatforms[2] = plat4;
 var gameTime = 0;
 var isGameOver;
 var beforeGame = true;
+var player1 = false;
+var player2 = false;
 var gravity = .1; 
 
 
@@ -257,8 +286,8 @@ function updateEntities(dt) {
     plat2.sprite.update(dt);
     plat3.sprite.update(dt);
     plat4.sprite.update(dt);
-    speccer();
     spec1.sprite.update(dt);
+    spec2.sprite.update(dt);
     //Update Clouds
     for(var i=0; i<clouds.length; i++) {
         clouds[i].pos[0] += 100*dt;
