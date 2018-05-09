@@ -111,7 +111,7 @@
                         var atkRect = [atkX,atkY,19,17];
                         var shotSprite = new Sprite('img/testShot.png', sprPos, [19, 15], 1, [0]);//new Sprite("img/testShot.png",[0,0],[19,17],1,[0]);
                         var shotPiece = new GamePiece("attack",shotSprite,atkRect,[atkX,atkY]);
-                        shotPiece.atkSet(0,6,[atkXSpd,atkYSpd],"jab", this.pos[0]);
+                        shotPiece.atkSet(this.bodyID,6,[atkXSpd,atkYSpd],"jab", this.pos[0]);
                         atkArray[length] = shotPiece;
                     }
                     
@@ -138,7 +138,7 @@
                         var atkRect = [atkX,atkY,19,17];
                         var shotSprite = new Sprite('img/testShot.png', sprPos, [19, 15], 1, [0]);//new Sprite("img/testShot.png",[0,0],[19,17],1,[0]);
                         var shotPiece = new GamePiece("attack",shotSprite,atkRect,[atkX,atkY]);
-                        shotPiece.atkSet(0,this.atkFrames,[0,0],"sexKick", this.pos[0]);
+                        shotPiece.atkSet(this.bodyID,this.atkFrames,[0,0],"sexKick", this.pos[0]);
                         atkArray[length] = shotPiece;
                     }
                 }

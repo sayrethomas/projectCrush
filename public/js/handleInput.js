@@ -174,7 +174,10 @@
     }  
     
     //Attacking
-    if (input.isDown('.') && otherBody.atkType == "none"){
+    if (input.isDown('m'))
+        console.log('m down');
+    
+    if (input.isDown('m') && otherBody.atkType == "none"){
         if (otherBody.zAtkReady){
             if (otherBody.standing)
                 if (input.isDown("k"))
@@ -189,8 +192,8 @@
             else
                 otherBody.bodyAtkStart("sexKick",attacks);
         }
-        console.log(otherBody.weight);
-    } else if (!input.isDown("."))
+        //console.log(otherBody.weight);
+    } else if (!input.isDown("m"))
         otherBody.zAtkReady = true;
     }
     

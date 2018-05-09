@@ -123,6 +123,8 @@ var otherBody = new GamePiece("player",
 var bodies = [];
 bodies[0] = player;
 bodies[1] = otherBody;
+player.bodyID = 0;
+otherBody.bodyID = 1;
 
 var sFrames = [];
 
