@@ -7,6 +7,8 @@
         var key;
 
         switch(code) {
+        case 16:
+            key = 'SHIFT'; break;
         case 32:
             key = 'SPACE'; break;
         case 37:
@@ -17,10 +19,12 @@
             key = 'RIGHT'; break;
         case 40:
             key = 'DOWN'; break;
-        case 89:
+        /*
+            case 89:
             key = 'Y'; break
         case 90:
             key = 'Z'; break
+        */
         default:
             // Convert ASCII codes to letters
             key = String.fromCharCode(code);

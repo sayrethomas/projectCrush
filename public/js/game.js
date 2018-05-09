@@ -240,7 +240,8 @@ var gravity = .1;
     if (player.velocity[0] != 0)
         printInfo = true;
     
-    handleInput.inputs(dt);
+    handleInput.inputs_1(dt);
+    handleInput.inputs_2(dt);
     handleInput.dummyInputs(dt);
     for (var i =0;i<bodies.length;i++){
         //Being hit
